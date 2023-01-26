@@ -4,7 +4,10 @@ import Dashboard from "../Dashboard/Dashboard";
 import Invoice from "../Invoice/NewInvoice";
 import NewCustomer from "../Customer/NewCustomer";
 import MedicinePage from "../Medicine/MedicinePage";
+import LogoutPage from "../LogoutPage/LogoutPage";
 import axios from "axios";
+import { Avatar } from "@mui/material";
+import { blue } from "@mui/material/colors";
 
 class MainPage extends Component {
   state = {
@@ -19,6 +22,9 @@ class MainPage extends Component {
     this.setState(this.state);
   };
   updateLastAccessedScreen = (value) => {
+    if (value === 8) {
+      return;
+    }
     this.props.mainCom.state.user.lastAccessedScreen = value;
     axios
       .post(
@@ -28,6 +34,14 @@ class MainPage extends Component {
       .then((resp) => {
         //
       });
+  };
+  navBarStyle = {
+    display: "flex",
+    gap: "1rem",
+    alignItems: "center",
+  };
+  changeHoverNav = (val) => {
+    this.setState({ hoverNav: val });
   };
   render() {
     const contentArea = () => {
@@ -46,6 +60,8 @@ class MainPage extends Component {
           return;
         case 7:
           return;
+        case 8:
+          return <LogoutPage />;
         default:
           return;
       }
@@ -53,13 +69,24 @@ class MainPage extends Component {
     return (
       <div>
         <div class="layout">
-          <a class="header" href="#0">
+          <a
+            class="header"
+            href="#0"
+            style={{
+              fontFamily: "roboto",
+              backgroundColor: "white",
+              color: "black",
+              textDecoration: "none",
+            }}
+          >
             <i class="fa">
               <h5>Pharmacy Management</h5>
             </i>
-            <div class="header-user">
-              <i class="fas fa-user-circle icon"></i>Hello{" "}
-              {this.props.mainCom.state.user.username}
+            <div style={this.navBarStyle}>
+              <Avatar sx={{ bgcolor: blue[500] }}>
+                {this.props.mainCom.state.user.username[0].toUpperCase()}
+              </Avatar>
+              Hello {this.props.mainCom.state.user.username}
             </div>
           </a>
 
@@ -188,8 +215,8 @@ class MainPage extends Component {
             </ul>
           </div>
 
-          <main class="content">
-            <div class="main-header">{contentArea()}</div>
+          <main class="content" style={{ height: 550, width: 300 }}>
+            {contentArea()}
           </main>
         </div>
       </div>

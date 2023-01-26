@@ -1,35 +1,47 @@
 import React, { Component } from "react";
-
+import { TextField, Button } from "@mui/material";
 class NewCustomer extends Component {
   state = {};
+  textFieldAlign = {
+    marginTop: "20px",
+    width: "25rem",
+  };
+  buttonAlign = {
+    marginTop: "20px",
+  };
   render() {
     return (
       <div className="new-customer">
         <div class="main-title">
-          <h1>New Customer</h1>
+          <h1 style={{ color: "black" }}>New Customer</h1>
         </div>
         <div class="main-form">
-          <form name="event">
-            <input type="text" id="cname" placeholder="Name" />
-            <input type="number" id="cnumber" placeholder="Phone Number" />
-            <input type="text" id="clocation" placeholder="Location" />
+          <form name="event" style={{ verticalAlign: "middle", gap: "10px" }}>
+            <TextField
+              style={this.textFieldAlign}
+              id="cname"
+              label="Name"
+              variant="filled"
+            />
+            <br />
+            <TextField
+              style={this.textFieldAlign}
+              id="cnumber"
+              label="Phone Number"
+              variant="filled"
+            />
+            <br />
+            <TextField
+              style={this.textFieldAlign}
+              id="clocation"
+              label="Location"
+              variant="filled"
+            />
+            <br />
 
-            <div class="input-group">
-              <input type="date" id="fdate" />
-              <label for="fallday" class="all_day">
-                All day:
-              </label>
-              <input type="checkbox" class="checkbox" id="fallday" />
-            </div>
-
-            <div class="input-hour">
-              <div id="fhourdiv">
-                <input type="time" id="fstart" class="hour" />
-                <input type="time" id="fend" class="hour" />
-              </div>
-            </div>
-
-            <input type="submit" id="fsubmit" value="Save" class="button" />
+            <Button style={this.buttonAlign} variant="contained">
+              Contained
+            </Button>
           </form>
         </div>
       </div>

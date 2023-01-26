@@ -7,7 +7,7 @@ class LoginPage extends Component {
     console.log(this.props.mainCom.state.user.username);
     axios.get("http://localhost:3000/logged-in").then((res) => {
       this.props.mainCom.reloadHandleLogin(res.data);
-      if (res.data.username != "") {
+      if (res.data.username !== "") {
         console.log("called");
         return;
       }
