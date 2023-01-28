@@ -13,7 +13,7 @@ class LoginPage extends Component {
       }
     });
   }
-  validateLogin(e) {
+  validateLogin(e) {   
     e.preventDefault();
     const user = {
       username: document.getElementById("username").value,

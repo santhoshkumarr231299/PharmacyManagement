@@ -20,7 +20,7 @@ app.use(cors({
 var connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: '',
+  password: 'root',
   database: 'PHARMACY_MANAGEMENT'
 })
 
@@ -42,7 +42,7 @@ app.get('/logged-in', (req, res) => {
         res.status(200).send({
           username: session.user.username,
           role: session.user.role,
-          lastAccessedScreen: result[0].LAST_ACCESSED,
+          lastAccessedScreen: result[0].last_accessed,
         })
       });
     }
@@ -61,9 +61,9 @@ app.post('/login', (req, res) => {
     if (result.length == 1) {
       session = req.session;
       var validatedUser = {
-        username: result[0].USERNAME,
-        role: result[0].ROLE,
-        lastAccessedScreen: result[0].LAST_ACCESSED,
+        username: result[0].username,
+        role: result[0].role,
+        lastAccessedScreen: result[0].last_accessed,
         message: 'success'
       };
       session.user = validatedUser;
@@ -95,8 +95,8 @@ app.get('/get-medicines',(req,res) => {
     let data = [];
     result.map((mdata) => {
       data.push({
-        mname : mdata.MNAME,
-        mcompany : mdata.MCOMPANY,
+        mname : mdata.mname,
+        mcompany : mdata.mcompany,
       });
     })
     res.status(200).send(data);

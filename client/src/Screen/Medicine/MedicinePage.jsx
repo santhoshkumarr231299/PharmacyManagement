@@ -3,6 +3,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
+import { TextField, Button, Box } from "@mui/material";
 
 export default function MedicinePageManager() {
   const [isAddMedClicked, setAddMedClicked] = useState(false);
@@ -41,83 +42,93 @@ function MedicinePage(props) {
   ];
   console.log(medicines);
   return (
-    <div style={{ height: 500, width: "100%" }}>
+    <Box
+      boxShadow={2}
+      style={{
+        alignSelf: "center",
+        margin: "auto",
+        backgroundColor: "white",
+        width: "1135px",
+        height: "600px",
+        color: "Black",
+        boxShadow: "10px",
+      }}
+    >
+      <Button
+        style={{
+          marginBottom: "20px",
+          marginTop: "10px",
+          position: "",
+          right: 50,
+        }}
+        variant="contained"
+        onClick={() => props.addMedStatus(true)}
+      >
+        Add Medicine
+      </Button>
       <DataGrid
+        style={{
+          alignSelf: "center",
+          width: "1000px",
+          height: "500px",
+          margin: "auto",
+        }}
         rows={dataGridRows}
         columns={columns}
         pageSize={5}
         rowsPerPageOptions={[5]}
         checkboxSelection
       />
-    </div>
+    </Box>
   );
 }
 
 function AddMedicinePage(props) {
-  const [dateType, setDateType] = useState(true);
-  const changeType = (e, val) => {
-    e.preventDefault();
-    setDateType(val);
+  const textFieldAlign = {
+    marginTop: "20px",
+    width: "25rem",
   };
   return (
-    <div className="new-medicine">
-      <div class="main-title">
-        <h1>New Medicine</h1>
-      </div>
-      <div class="main-form">
-        <form name="event">
-          <input
-            type="text"
-            id="cname"
-            placeholder="Medicine Name"
-            onFocus={(e) => changeType(e, true)}
-          />
-          <input
-            type="number"
-            id="cnumber"
-            placeholder="Company Name"
-            onFocus={(e) => changeType(e, true)}
-          />
-          <input
-            type="text"
-            id="clocation"
-            placeholder="Location"
-            onFocus={(e) => changeType(e, true)}
-          />
-
-          <div class="input-group">
-            <input
-              type={dateType ? "text" : "date"}
-              onFocus={(e) => changeType(e, false)}
-              id="fdate"
-              placeholder="Expiry Date"
+    <div className="new-customer">
+      <Box
+        boxShadow={2}
+        style={{
+          marginBottom: "20px",
+          backgroundColor: "white",
+          width: "1135px",
+          color: "Black",
+          boxShadow: "10px",
+        }}
+      >
+        <div class="main-title">
+          <h2 style={{ color: "black", paddingTop: "20px" }}>New Medicine</h2>
+        </div>
+        <div class="main-form">
+          <form name="event" style={{ verticalAlign: "middle", gap: "10px" }}>
+            <TextField
+              style={textFieldAlign}
+              id="medname"
+              label="Name"
+              variant="filled"
             />
-            {/* <label for="fallday" class="all_day">
-              All day:
-            </label>
-            <input type="checkbox" class="checkbox" id="fallday" /> */}
-          </div>
+            <br />
+            <TextField
+              style={textFieldAlign}
+              id="medcompany"
+              label="Company"
+              variant="filled"
+            />
+            <br />
 
-          <div class="input-hour">
-            <div id="fhourdiv">
-              <input
-                type="time"
-                id="fstart"
-                class="hour"
-                onFocus={(e) => changeType(e, true)}
-              />
-              <input
-                type="time"
-                id="fend"
-                class="hour"
-                onFocus={(e) => changeType(e, true)}
-              />
-            </div>
-          </div>
-
-          <input type="submit" id="fsubmit" value="Save" class="button" />
-        </form>
-      </div>
+            <Button
+              style={{ marginBottom: "20px", marginTop: "20px" }}
+              variant="contained"
+            >
+              Add Medicine
+            </Button>
+          </form>
+        </div>
+      </Box>
     </div>
   );
 }

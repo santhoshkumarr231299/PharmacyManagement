@@ -194,7 +194,7 @@ class MainPage extends Component {
                 >
                   {" "}
                   <i class="fas fa-lightbulb icon"></i>
-                  <em>Report</em>
+                  <em>Reports</em>
                 </a>
               </li>
               <li>
