@@ -3,7 +3,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { TextField, Button, Box } from "@mui/material";
+import { TextField, Button, Paper } from "@mui/material";
 
 export default function CustomerPageManager() {
   const [isAddMedClicked, setAddMedClicked] = useState(false);
@@ -42,8 +42,8 @@ function CustomerPage(props) {
   ];
   console.log(medicines);
   return (
-    <Box
-      boxShadow={2}
+    <Paper
+      elevation={3}
       style={{
         alignSelf: "center",
         margin: "auto",
@@ -51,7 +51,6 @@ function CustomerPage(props) {
         width: "1135px",
         height: "600px",
         color: "Black",
-        boxShadow: "10px",
       }}
     >
       <Button
@@ -79,7 +78,7 @@ function CustomerPage(props) {
         rowsPerPageOptions={[5]}
         checkboxSelection
       />
-    </Box>
+    </Paper>
   );
 }
 
@@ -93,14 +92,13 @@ function AddCustomerPage(props) {
   };
   return (
     <div className="new-customer">
-      <Box
-        boxShadow={2}
+      <Paper
+        elevation={3}
         style={{
           marginBottom: "20px",
           backgroundColor: "white",
           width: "1135px",
           color: "Black",
-          boxShadow: "10px",
         }}
       >
         <div class="main-title">
@@ -131,7 +129,7 @@ function AddCustomerPage(props) {
             </Button>
           </form>
         </div>
-      </Box>
+      </Paper>
     </div>
   );
 }

@@ -37,7 +37,7 @@ function MedicinePage(props) {
   }, []);
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
-    { field: "mname", headerName: "Medicine Name", width: 130 },
+    { field: "mname", headerName: "Pharmacist Name", width: 130 },
     { field: "mcompany", headerName: "Company Name", width: 130 },
   ];
   console.log(medicines);
@@ -63,7 +63,7 @@ function MedicinePage(props) {
         variant="contained"
         onClick={() => props.addMedStatus(true)}
       >
-        Add Medicine
+        Add Pharmacist
       </Button>
       <DataGrid
         style={{
@@ -99,7 +99,7 @@ function AddMedicinePage(props) {
         }}
       >
         <div class="main-title">
-          <h2 style={{ color: "black", paddingTop: "20px" }}>New Medicine</h2>
+          <h2 style={{ color: "black", paddingTop: "20px" }}>New Pharmacist</h2>
         </div>
         <div class="main-form">
           <form name="event" style={{ verticalAlign: "middle", gap: "10px" }}>
@@ -122,7 +122,7 @@ function AddMedicinePage(props) {
               style={{ marginBottom: "20px", marginTop: "20px" }}
               variant="contained"
             >
-              Add Medicine
+              Add Pharmacist
             </Button>
           </form>
         </div>

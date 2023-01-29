@@ -1,13 +1,25 @@
 import React, { Component } from "react";
 import "./styles.css";
-import Dashboard from "../Dashboard/Dashboard";
+import DashboardPage from "../Dashboard/Dashboard";
 import Invoice from "../Invoice/NewInvoice";
 import NewCustomer from "../Customer/NewCustomer";
 import MedicinePage from "../Medicine/MedicinePage";
 import LogoutPage from "../LogoutPage/LogoutPage";
+import PharmacistPage from "../Pharmacist/PharmacistPage";
+import ReportsPage from "../ReportsPage/ReportsPage";
 import axios from "axios";
 import { Avatar } from "@mui/material";
 import { blue } from "@mui/material/colors";
+import {
+  Dashboard,
+  Receipt,
+  Vaccines,
+  LocalPharmacy,
+  Flag,
+  Logout,
+  ShoppingBasket,
+  People,
+} from "@mui/icons-material";
 
 class MainPage extends Component {
   state = {
@@ -43,11 +55,21 @@ class MainPage extends Component {
   changeHoverNav = (val) => {
     this.setState({ hoverNav: val });
   };
+  menus = [
+    { name: "Dashboard", menuValue: 1, icon: <Dashboard /> },
+    { name: "Invoice", menuValue: 2, icon: <Receipt /> },
+    { name: "Customer", menuValue: 3, icon: <People /> },
+    { name: "Medicine", menuValue: 4, icon: <Vaccines /> },
+    { name: "Pharmacist", menuValue: 5, icon: <LocalPharmacy /> },
+    { name: "Purchase", menuValue: 6, icon: <ShoppingBasket /> },
+    { name: "Reports", menuValue: 7, icon: <Flag /> },
+    { name: "Logout", menuValue: 8, icon: <Logout /> },
+  ];
   render() {
     const contentArea = () => {
       switch (this.state.page.option) {
         case 1:
-          return <Dashboard />;
+          return <DashboardPage />;
         case 2:
           return <Invoice />;
         case 3:
@@ -55,11 +77,11 @@ class MainPage extends Component {
         case 4:
           return <MedicinePage />;
         case 5:
-          return;
+          return <PharmacistPage />;
         case 6:
           return;
         case 7:
-          return;
+          return <ReportsPage />;
         case 8:
           return <LogoutPage />;
         default:
@@ -92,126 +114,29 @@ class MainPage extends Component {
 
           <div class="sidebar">
             <ul>
-              <li>
-                {" "}
-                <a
-                  class={
-                    "sidebar-list-item" +
-                    (this.state.page.option === 1 ? " active" : "")
-                  }
-                  onClick={(e) => this.changeOption(e, 1)}
-                  href="#0"
-                >
-                  {" "}
-                  <i class="fas fa-home icon"></i>
-                  <em>Dashboard</em>
-                </a>
-              </li>
-              <li>
-                {" "}
-                <a
-                  class={
-                    "sidebar-list-item" +
-                    (this.state.page.option === 2 ? " active" : "")
-                  }
-                  onClick={(e) => this.changeOption(e, 2)}
-                  href="#0"
-                >
-                  {" "}
-                  <i class="fas fa-user icon"></i>
-                  <em>Invoice</em>
-                </a>
-              </li>
-              <li>
-                {" "}
-                <a
-                  class={
-                    "sidebar-list-item" +
-                    (this.state.page.option === 3 ? " active" : "")
-                  }
-                  onClick={(e) => this.changeOption(e, 3)}
-                  href="#0"
-                >
-                  {" "}
-                  <i class="fas fa-tasks icon"></i>
-                  <em>Customer</em>
-                </a>
-              </li>
-              <li>
-                {" "}
-                <a
-                  class={
-                    "sidebar-list-item" +
-                    (this.state.page.option === 4 ? " active" : "")
-                  }
-                  onClick={(e) => this.changeOption(e, 4)}
-                  href="#0"
-                >
-                  {" "}
-                  <i class={"fas fa-calendar icon"}></i>
-                  <em>Medicine</em>
-                </a>
-              </li>
-              <li>
-                {" "}
-                <a
-                  class={
-                    "sidebar-list-item" +
-                    (this.state.page.option === 5 ? " active" : "")
-                  }
-                  onClick={(e) => this.changeOption(e, 5)}
-                  href="#0"
-                >
-                  {" "}
-                  <i class="fas fa-toolbox icon"></i>
-                  <em>Supplier</em>
-                </a>
-              </li>
-              <li>
-                {" "}
-                <a
-                  class={
-                    "sidebar-list-item" +
-                    (this.state.page.option === 6 ? " active" : "")
-                  }
-                  onClick={(e) => this.changeOption(e, 6)}
-                  href="#0"
-                >
-                  {" "}
-                  <i class="fas fa-comments icon"></i>
-                  <em>Purchase</em>
-                </a>
-              </li>
-              <li>
-                {" "}
-                <a
-                  class={
-                    "sidebar-list-item" +
-                    (this.state.page.option === 7 ? " active" : "")
-                  }
-                  onClick={(e) => this.changeOption(e, 7)}
-                  href="#0"
-                >
-                  {" "}
-                  <i class="fas fa-lightbulb icon"></i>
-                  <em>Reports</em>
-                </a>
-              </li>
-              <li>
-                {" "}
-                <a
-                  class={
-                    "sidebar-list-item" +
-                    (this.state.page.option === 8 ? " active" : "")
-                  }
-                  onClick={(e) => this.changeOption(e, 8)}
-                  href="#0"
-                >
-                  {" "}
-                  <i class="fas fa-lock icon"></i>
-                  <em>Logout</em>
-                </a>
-              </li>
+              {this.menus.map((menu) => (
+                <li style={{ marginLeft: "25px" }}>
+                  <a
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                    class={
+                      "sidebar-list-item" +
+                      (this.state.page.option === menu.menuValue
+                        ? " active"
+                        : "")
+                    }
+                    onClick={(e) => this.changeOption(e, menu.menuValue)}
+                    href="#0"
+                  >
+                    <div>{menu.icon}</div>
+                    <div>
+                      <em style={{ marginLeft: "-40px" }}>{menu.name}</em>
+                    </div>
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 

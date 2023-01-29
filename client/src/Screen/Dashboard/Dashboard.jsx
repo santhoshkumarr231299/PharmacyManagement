@@ -1,5 +1,5 @@
 import React from "react";
-import { Box } from "@mui/material";
+import { Paper } from "@mui/material";
 // import Barchart from "./Chart";
 function boxes() {
   const list = [
@@ -13,15 +13,16 @@ function boxes() {
   let element = [];
   list.map((data) =>
     element.push(
-      <Box
-        boxShadow={2}
+      <Paper
+        // boxShadow={2}
+        elevation={3}
         style={{
           marginBottom: "20px",
           backgroundColor: "white",
           width: "200px",
           height: "200px",
           color: "Black",
-          boxShadow: "10px",
+          // boxShadow: "10px",
         }}
       >
         <h5
@@ -34,7 +35,7 @@ function boxes() {
         >
           {data.fieldName}
         </h5>
-      </Box>
+      </Paper>
     )
   );
   return element;
@@ -55,15 +56,15 @@ export default function Dashboard() {
         {boxes()}
       </div>
       <div>
-        <Box
-          boxShadow={2}
+        <Paper
+          elevation={3}
           style={{
             marginRight: "20px",
             backgroundColor: "white",
             width: "1130px",
             height: "380px",
             color: "Black",
-            boxShadow: "10px",
+            // boxShadow: "10px",
           }}
         >
           <h5
@@ -77,7 +78,7 @@ export default function Dashboard() {
             Chart
           </h5>
           {/* <Barchart /> */}
-        </Box>
+        </Paper>
       </div>
     </div>
   );
