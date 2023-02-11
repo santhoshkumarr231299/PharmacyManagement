@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { TextField, Button, Paper } from "@mui/material";
 
-export default function MedicinePageManager() {
+function SalesReportPageManager() {
   const [isAddMedClicked, setAddMedClicked] = useState(false);
   const changeStatus = (val) => {
     setAddMedClicked(val);
@@ -13,32 +13,34 @@ export default function MedicinePageManager() {
   const getMedPage = () => {
     switch (isAddMedClicked) {
       case true:
-        return <AddMedicinePage />;
+        return <AddSalesReportPage />;
       default:
-        return <MedicinePage addMedStatus={changeStatus} />;
+        return <SalesReportPage addMedStatus={changeStatus} />;
     }
   };
   return <>{getMedPage()}</>;
 }
 
-function MedicinePage(props) {
-  const [medicines, setMedicines] = useState([]);
+export default function SalesReportPage(props) {
+  const [medicines, setSalesReports] = useState([]);
   const [dataGridRows, setDataGridRows] = useState([]);
   useEffect(() => {
     let temp = [];
     let counter = 0;
-    axios.get("http://localhost:3000/get-medicines").then((resp) => {
-      setMedicines(resp.data);
-      resp.data.forEach((da) => {
-        temp.push({ id: ++counter, mname: da.mname, mcompany: da.mcompany });
-      });
-      setDataGridRows(temp);
-    });
+    // axios.get("http://localhost:3000/get-medicines").then((resp) => {
+    //   setSalesReports(resp.data);
+    //   resp.data.forEach((da) => {
+    //     temp.push({ id: ++counter, mname: da.mname, mcompany: da.mcompany });
+    //   });
+    //   setDataGridRows(temp);
+    // });
   }, []);
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
-    { field: "mname", headerName: "Medicine Name", width: 130 },
-    { field: "mcompany", headerName: "Company Name", width: 130 },
+    { field: "title", headerName: "Sales Report Title", width: 130 },
+    { field: "type", headerName: "Sales Report Type", width: 130 },
+    { field: "date", headerName: "Date", width: 70 },
+    { field: "reporter", headerName: "Sales Reported By", width: 130 },
   ];
   console.log(medicines);
   return (
@@ -63,7 +65,7 @@ function MedicinePage(props) {
         variant="contained"
         onClick={() => props.addMedStatus(true)}
       >
-        Add Medicine
+        Add Sales Report
       </Button>
       <DataGrid
         style={{
@@ -82,7 +84,7 @@ function MedicinePage(props) {
   );
 }
 
-function AddMedicinePage(props) {
+function AddSalesReportPage(props) {
   const textFieldAlign = {
     marginTop: "20px",
     width: "25rem",
@@ -99,7 +101,9 @@ function AddMedicinePage(props) {
         }}
       >
         <div class="main-title">
-          <h2 style={{ color: "black", paddingTop: "20px" }}>New Medicine</h2>
+          <h2 style={{ color: "black", paddingTop: "20px" }}>
+            New SalesReport
+          </h2>
         </div>
         <div class="main-form">
           <form name="event" style={{ verticalAlign: "middle", gap: "10px" }}>
@@ -118,12 +122,12 @@ function AddMedicinePage(props) {
             />
             <br />
 
-            <Button
+            {/* <Button
               style={{ marginBottom: "20px", marginTop: "20px" }}
               variant="contained"
             >
-              Add Medicine
-            </Button>
+              Add Sales Report
+            </Button> */}
           </form>
         </div>
       </Paper>

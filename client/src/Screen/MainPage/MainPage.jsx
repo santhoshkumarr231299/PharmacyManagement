@@ -7,6 +7,10 @@ import MedicinePage from "../Medicine/MedicinePage";
 import LogoutPage from "../LogoutPage/LogoutPage";
 import PharmacistPage from "../Pharmacist/PharmacistPage";
 import ReportsPage from "../ReportsPage/ReportsPage";
+import DeliveryMenPage from "../DelvieryMenPage/DeliveryMenPage";
+import SalesReportsPage from "../SalesReport/SalesReportPage";
+import PurchasePage from "../PurchasePage/PurchasePage";
+import SettingsPage from "../SettingsPage/Settings";
 import axios from "axios";
 import { Avatar } from "@mui/material";
 import { blue } from "@mui/material/colors";
@@ -19,6 +23,9 @@ import {
   Logout,
   ShoppingBasket,
   People,
+  DeliveryDining,
+  AttachMoney,
+  Settings,
 } from "@mui/icons-material";
 
 class MainPage extends Component {
@@ -34,7 +41,7 @@ class MainPage extends Component {
     this.setState(this.state);
   };
   updateLastAccessedScreen = (value) => {
-    if (value === 8) {
+    if (value === 11 || value === 10) {
       return;
     }
     this.props.mainCom.state.user.lastAccessedScreen = value;
@@ -61,9 +68,12 @@ class MainPage extends Component {
     { name: "Customer", menuValue: 3, icon: <People /> },
     { name: "Medicine", menuValue: 4, icon: <Vaccines /> },
     { name: "Pharmacist", menuValue: 5, icon: <LocalPharmacy /> },
-    { name: "Purchase", menuValue: 6, icon: <ShoppingBasket /> },
-    { name: "Reports", menuValue: 7, icon: <Flag /> },
-    { name: "Logout", menuValue: 8, icon: <Logout /> },
+    { name: "Delivery Men", menuValue: 6, icon: <DeliveryDining /> },
+    { name: "Sales Report", menuValue: 7, icon: <AttachMoney /> },
+    { name: "Purchase", menuValue: 8, icon: <ShoppingBasket /> },
+    { name: "Reports", menuValue: 9, icon: <Flag /> },
+    { name: "Settings", menuValue: 10, icon: <Settings /> },
+    { name: "Logout", menuValue: 11, icon: <Logout /> },
   ];
   render() {
     const contentArea = () => {
@@ -79,10 +89,18 @@ class MainPage extends Component {
         case 5:
           return <PharmacistPage />;
         case 6:
-          return;
+          return <DeliveryMenPage />;
         case 7:
-          return <ReportsPage />;
+          return <SalesReportsPage />;
         case 8:
+          return <PurchasePage username={this.props.mainCom.state.username} />;
+        case 9:
+          return <ReportsPage />;
+        case 10:
+          return (
+            <SettingsPage username={this.props.mainCom.state.user.username} />
+          );
+        case 11:
           return <LogoutPage />;
         default:
           return;

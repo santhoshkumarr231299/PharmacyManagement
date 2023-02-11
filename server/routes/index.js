@@ -122,4 +122,198 @@ app.post('/update-last-accessed', (req, res) => {
   });
 })
 
+app.post('/get-user-details', (req,res) => {
+  connection.query('select *  from users where username = ?',[req.body.username], (err, result, fields) => {
+    if(result) {
+      res.status(200).send({
+        username : result[0].username,
+        email : result[0].email,
+        mobileNumber : result[0].mobile_number,
+        pharmacyName : result[0].pharmacy_name,
+        branchId : result[0].branch_id,
+        message : "success"
+      })
+    }
+    else {
+      res.status(200).send({
+        username : '',
+        message : "success"
+      })
+    }
+  })
+  
+})
+
+app.post('/get-search-medicines', (req,res) => {
+  let tsearchWord = '%' + req.body.searchWord + '%';
+  connection.query('select * from medicines where mname like ? order by mname limit 18' , [tsearchWord], (err, result, fields) => {
+    let medicines = [];
+    result.map((data) => {
+      medicines.push({
+        medname : data.mname,
+        medcompany : data.mcompany,
+      })
+    })
+    res.status(200).send(medicines);
+  })
+})
+
+app.get('/get-cart-items', (req,res) => {
+  if(!session) {
+    res.status(200).send({
+      status : "error",
+      message : "Authorization failed"
+    })
+    return ;
+  }
+  connection.query('select medname, quantity, price from cartitems where username = ?', [session.user.username],(err, result, fields) => {
+    let data = [];
+    let count = 0;
+    result.map((item) => {
+      data.push({
+        id : count++,
+        medname : item.medname,
+        price : item.price,
+        quantity : item.quantity
+      })
+    })
+    res.status(200).send(data);
+  })
+})
+
+app.post('/update-pass', (req,res) => {
+  if(!session) {
+    res.status(200).send({
+      status : "error",
+      message : "Authentication Failed"
+    })
+    return ;
+  }
+  connection.query('select username from users where username = ? and password = ?', [session.user.username, req.body.oldPass],(err, result, fields) => {
+    if(err) {
+      res.status(200).send({
+        status : "error",
+        message : "Something went wrong"
+      })
+    }
+    if(result.length == 0)
+    {
+      console.log(result);
+      res.status(200).send({
+        status : "warning",
+        message : "Wrong Old Password"
+      })
+    }
+    else {
+      if(req.body.oldPass === req.body.newPass) {
+        res.status(200).send({
+          status : "warning",
+          message : "New Password and Old Password are same"
+        })
+      }
+      else {
+      connection.query('update users set password = ? where username = ?', [req.body.newPass, session.user.username],(err, result, fields) => {
+        if(err) {
+          res.status(200).send({
+            status : "error",
+            message : "Something went wrong"
+          })
+          
+        }
+        else {
+          res.status(200).send({
+            status : "success",
+            message : "New Password Updated Successfully"
+          })
+        }
+    })
+    }
+  }
+  });
+
+});
+
+app.post("/update-user-details", (req,res) => {
+  if(!session || (session.user.username !== req.body.username)) {
+    res.status(200).send({
+      status : "error",
+      message : "Authentication Failed"
+    })
+    return ;
+  }
+  var queryParam = [req.body.email, req.body.mobileNumber, req.body.branchId, session.user.username];
+  connection.query('update users set email = ?, mobile_number = ?, branch_id = ?  where username = ?', queryParam ,(err, result, fields) => {
+    if(err) {
+      res.status(200).send({
+        status : "error",
+        message : "Something went wrong"
+      })
+    }
+    else if(result.changedRows == 0) {
+      res.status(200).send({
+        status : "warning",
+        message : "User Values are the same before"
+      })
+    }
+    else {
+      res.status(200).send({
+        status : "success",
+        message : "New User Values Updated successfully"
+      })
+    }
+  });
+
+})
+
+app.get("/get-reports", (req,res) => {
+  if(!session) {
+    res.status(200).send({
+      status : "error",
+      message : "Authentication Failed"
+    })
+    return ;
+  }
+  connection.query('select * from reports order by reported_date desc', [session.user.username],(err, result, fields) => {
+    let data = [];
+    let count = 0;
+    result.map((report) => {
+      data.push({
+        id : count++,
+        reportTitle : report.report_title,
+        reportSubject : report.report_subject,
+        reportDesc : report.report_desc,
+        reportDate : report.reported_date,
+        reportedBy : report.username,
+        // role : report.role,
+      })
+    })
+    console.log(result);
+    res.status(200).send(data);
+  })
+});
+
+app.post("/post-report", (req,res) => {
+  if(!session) {
+    res.status(200).send({
+      status : "error",
+      message : "Authentication Failed"
+    })
+    return ;
+  }
+  var queryParam = [session.user.username, session.user.role, req.body.reportTitle, req.body.reportSubject,req.body.reportDesc];
+  connection.query('insert into reports (username, role, report_title, report_subject, report_desc, reported_date) values (?,?,?,?,?,NOW())', queryParam,(err, result, fields) => {
+    if(err) {
+      res.status(200).send({
+        status : "error",
+        message : "Something went wrong"
+      })
+    }
+    else {
+      res.status(200).send({
+        status : "success",
+        message : "New User Values Updated successfully"
+      })
+    }
+  })
+})
 module.exports = app;
