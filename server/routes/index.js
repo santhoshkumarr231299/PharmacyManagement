@@ -95,13 +95,54 @@ app.get('/get-medicines',(req,res) => {
     let data = [];
     result.map((mdata) => {
       data.push({
+        mid : mdata.mid,
         mname : mdata.mname,
         mcompany : mdata.mcompany,
+        quantity : mdata.quantity,
+        dateAdded : mdata.med_added_date,
+        expiryDate : mdata.expiry_date,
+        medMrp : mdata.med_mrp,
+        medRate : mdata.med_rate,
+        addedBy : mdata.added_by,
+        status : ('1' === mdata.status ? 'ACTIVE' : 'INACTIVE'),
       });
     })
     res.status(200).send(data);
   });
 })
+
+app.post('/post-medicine', (req,res) => {
+  if(!session) {
+    res.status(200).send({
+      status : "error",
+      message : "Authentication Failed"
+    })
+    return ;
+  }
+  var sizeOfMed = 0;
+  connection.query('select count(mid) as total from medicines',(err, result, fields) => {
+    sizeOfMed = result[0].total;
+    
+    var queryParam = [sizeOfMed + 1, req.body.medName, req.body.medCompany, req.body.medQuantity, req.body.medExpiryDate,req.body.medMrp, req.body.medRate, (req.body.medStatus === 'ACTIVE' ? '1' : '0'), session.user.username];
+  
+    connection.query("insert into medicines (mid, mname, mcompany, quantity, expiry_date, med_mrp, med_rate, status, added_by) values (?,?,?,?,?,?,?,?,?)", queryParam,(err, result, fields) => {
+      console.log
+      if(err) {
+        res.status(200).send({
+          status : "error",
+          message : "Something went wrong"
+        })
+      }
+      else {
+        res.status(200).send({
+          status : "success",
+          message : "New Medicine Added Successfully"
+        })
+      }
+    })
+  })
+ 
+});
 
 app.get('/logout', (req, res) => {
   session.destroy();
@@ -146,17 +187,25 @@ app.post('/get-user-details', (req,res) => {
 
 app.post('/get-search-medicines', (req,res) => {
   let tsearchWord = '%' + req.body.searchWord + '%';
-  connection.query('select * from medicines where mname like ? order by mname limit 18' , [tsearchWord], (err, result, fields) => {
-    let medicines = [];
-    result.map((data) => {
-      medicines.push({
-        medname : data.mname,
-        medcompany : data.mcompany,
-      })
+  connection.query('select * from medicines where mname like ? order by mname limit 16' , [tsearchWord], (err, result, fields) => {
+    let data = [];
+    result.map((mdata) => {
+      data.push({
+        mid : mdata.mid,
+        mname : mdata.mname,
+        mcompany : mdata.mcompany,
+        quantity : mdata.quantity,
+        dateAdded : mdata.med_added_date,
+        expiryDate : mdata.expiry_date,
+        medMrp : mdata.med_mrp,
+        medRate : mdata.med_rate,
+        addedBy : mdata.added_by,
+        status : ('1' === mdata.status ? 'ACTIVE' : 'INACTIVE'),
+      });
     })
-    res.status(200).send(medicines);
-  })
+    res.status(200).send(data);
 })
+});
 
 app.get('/get-cart-items', (req,res) => {
   if(!session) {
@@ -316,4 +365,7 @@ app.post("/post-report", (req,res) => {
     }
   })
 })
+
+
+
 module.exports = app;

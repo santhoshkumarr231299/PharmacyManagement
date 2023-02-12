@@ -24,12 +24,10 @@ export default function ReportPageManager() {
 }
 
 function ReportPage(props) {
-  const [reports, setReports] = useState([]);
   const [dataGridRows, setDataGridRows] = useState([]);
   useEffect(() => {
     let temp = [];
     axios.get("http://localhost:3000/get-reports").then((resp) => {
-      setReports(resp.data);
       console.log(resp.data);
       resp.data.forEach((tdata) => {
         temp.push({
@@ -160,9 +158,6 @@ function AddReportPage(props) {
         setMessage("Something went wrong");
         return;
       });
-    document.getElementById("title").innerText = "";
-    document.getElementById("subject").innerText = "";
-    document.getElementById("desc").innerText = "";
   };
   const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
