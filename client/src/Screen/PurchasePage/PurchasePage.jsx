@@ -32,6 +32,7 @@ export default function MainMedicinePage(props) {
 
 function MedicinePage(props) {
   const [medicines, setMedicines] = useState([]);
+  const [cartItemSize, setCartItemSize] = useState(0);
   const updateMedicines = (e) => {
     e.preventDefault();
     axios
@@ -53,6 +54,17 @@ function MedicinePage(props) {
       })
       .then((resp) => {
         setMedicines(resp.data);
+      })
+      .catch((err) => {
+        console.log("something went wrong");
+      });
+    axios
+      .get("http://localhost:3000/get-cart-items-count")
+      .then((resp) => {
+        setCartItemSize(resp.data.cartSize);
+      })
+      .catch((err) => {
+        console.log("something went wrong");
       });
   }, []);
   console.log(medicines);
@@ -103,7 +115,7 @@ function MedicinePage(props) {
               onChange={(e) => updateMedicines(e)}
             />
             <Tooltip title="Cart" onClick={(e) => changeOption(e)} arrow>
-              <Badge badgeContent={4} color="primary">
+              <Badge badgeContent={cartItemSize} color="primary">
                 <ShoppingCartIcon
                   color="action"
                   onClick={(e) => console.log("clicked")}
@@ -165,18 +177,34 @@ function MedicinePage(props) {
 
 function CartPage(props) {
   const [medList, setMedList] = useState([]);
-  medList.push(
-    {
-      id: 1,
-      medName: "Name",
-      quantity: 2,
-    },
-    {
-      id: 2,
-      medName: "Name2",
-      quantity: 100,
-    }
-  );
+  const [totalAmount, setTotalAmount] = useState(0);
+
+  const updateTotAmt = () => {
+    let amt = 0;
+    medList.forEach((data) => {
+      amt += data.quantity * data.price;
+    });
+    setMedList(amt);
+  };
+
+  useEffect(() => {
+    axios.get("http://localhost:3000/get-cart-items").then((resp) => {
+      let tempList = [];
+      let amt = 0;
+      resp.data.forEach((data) => {
+        amt += data.quantity * data.price;
+        tempList.push({
+          id: data.id,
+          mid: data.mid,
+          medName: data.medName,
+          quantity: data.quantity,
+          price: data.price,
+        });
+      });
+      setTotalAmount(amt);
+      setMedList(tempList);
+    });
+  }, []);
   const changeOption = (e) => {
     e.preventDefault();
     props.changeOption(0);
@@ -184,8 +212,52 @@ function CartPage(props) {
   };
   const handleDelete = (e, val) => {
     e.preventDefault();
-    medList.splice(val - 1);
     console.log(medList);
+  };
+  const updateQuantity = (e, id) => {
+    axios
+      .post("http://localhost:3000/update-cart-items", {
+        newQuantity: e.target.value,
+        mid: id,
+      })
+      .then((resp) => {
+        let tempList = [];
+        let amt = 0;
+        resp.data.forEach((data) => {
+          amt += data.quantity * data.price;
+          tempList.push({
+            id: data.id,
+            mid: data.mid,
+            medName: data.medName,
+            quantity: data.quantity,
+            price: data.price,
+          });
+        });
+        setTotalAmount(amt);
+        setMedList(tempList);
+      });
+  };
+  const deleteItem = (e, id) => {
+    axios
+      .post("http://localhost:3000/delete-cart-items", {
+        mid: id,
+      })
+      .then((resp) => {
+        let tempList = [];
+        let amt = 0;
+        resp.data.forEach((data) => {
+          amt += data.quantity * data.price;
+          tempList.push({
+            id: data.id,
+            mid: data.mid,
+            medName: data.medName,
+            quantity: data.quantity,
+            price: data.price,
+          });
+        });
+        setTotalAmount(amt);
+        setMedList(tempList);
+      });
   };
   return (
     <div>
@@ -238,10 +310,18 @@ function CartPage(props) {
                   <th>S. No.</th>
                   <th>Medicine Name</th>
                   <th>Quantity</th>
+                  <th>Price</th>
                   <th>Delete</th>
                 </tr>
               </thead>
               <tbody>
+                <tr>
+                  <td>----</td>
+                  <td>-------------------------</td>
+                  <td>-------------------------</td>
+                  <td>-----------------</td>
+                  <td>----</td>
+                </tr>
                 {medList.map((med) => (
                   <tr>
                     <td>{med.id}</td>
@@ -254,8 +334,8 @@ function CartPage(props) {
                           width: "80px",
                         }}
                         id="filled-number"
-                        label=""
                         type="number"
+                        onChange={(e) => updateQuantity(e, med.mid)}
                         InputLabelProps={{
                           shrink: true,
                         }}
@@ -263,18 +343,35 @@ function CartPage(props) {
                         defaultValue={med.quantity}
                       />
                     </td>
+                    <td>{med.price}</td>
                     <td>
                       <div
                         onClick={(e) => handleDelete(e, med.id)}
-                        key={med.id}
+                        key={med.mid}
                       >
-                        <IconButton aria-label="delete">
+                        <IconButton
+                          aria-label="delete"
+                          onClick={(e) => deleteItem(e, med.mid)}
+                        >
                           <DeleteIcon />
                         </IconButton>
                       </div>
                     </td>
                   </tr>
                 ))}
+                <tr>
+                  <td>----</td>
+                  <td>-------------------------</td>
+                  <td>-------------------------</td>
+                  <td>-----------------</td>
+                  <td>----</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <th>Total</th>
+                  <td>{totalAmount}</td>
+                </tr>
               </tbody>
             </table>
           </div>

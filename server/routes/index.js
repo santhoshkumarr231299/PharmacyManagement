@@ -215,15 +215,16 @@ app.get('/get-cart-items', (req,res) => {
     })
     return ;
   }
-  connection.query('select medname, quantity, price from cartitems where username = ?', [session.user.username],(err, result, fields) => {
+  connection.query('select medname, quantity, price, mid from cartitems where username = ?', [session.user.username],(err, result, fields) => {
     let data = [];
-    let count = 0;
+    let count = 1;
     result.map((item) => {
       data.push({
         id : count++,
-        medname : item.medname,
+        medName : item.medname,
         price : item.price,
-        quantity : item.quantity
+        quantity : item.quantity,
+        mid : item.mid
       })
     })
     res.status(200).send(data);
@@ -366,6 +367,46 @@ app.post("/post-report", (req,res) => {
   })
 })
 
+app.get('/get-cart-items-count', (req,res) => {
+  if(!session) {
+    res.status(200).send({
+      status : "error",
+      message : "Authentication Failed"
+    })
+    return ;
+  }
+  connection.query('select count(username) as total from cartitems where username = ?', [session.user.username], (err, result, fields) => {
+    res.status(200).send({
+      cartSize : result[0].total,
+      message : 'success'
+    })
+  })
+})
 
+app.post('/update-cart-items', (req,res) => {
+  if(!session) {
+    res.status(200).send({
+      status : "error",
+      message : "Authentication Failed"
+    })
+    return ;
+  }
+  connection.query('update cartitems set quantity = ? where username = ? and mid = ?', [req.body.newQuantity,session.user.username, req.body.mid], (err, result, fields) => {
+    res.redirect('/get-cart-items');
+  })
+})
+
+app.post('/delete-cart-items', (req,res) => {
+  if(!session) {
+    res.status(200).send({
+      status : "error",
+      message : "Authentication Failed"
+    })
+    return ;
+  }
+  connection.query('delete from cartitems where username = ? and mid = ?', [session.user.username, req.body.mid], (err, result, fields) => {
+    res.redirect('/get-cart-items');
+  })
+})
 
 module.exports = app;
