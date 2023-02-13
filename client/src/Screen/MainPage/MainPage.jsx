@@ -1,5 +1,7 @@
-import React, { Component } from "react";
-import "./styles.css";
+import React from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+// import "./styles.css";
 import DashboardPage from "../Dashboard/Dashboard";
 import Invoice from "../Invoice/NewInvoice";
 import NewCustomer from "../Customer/NewCustomer";
@@ -28,41 +30,41 @@ import {
   Settings,
 } from "@mui/icons-material";
 
-class MainPage extends Component {
-  state = {
-    page: {
-      option: this.props.mainCom.state.lastAccessedScreen,
-    },
-  };
-  changeOption = (e, value) => {
+function MainPage() {
+  const [option, setOption] = useState(0);
+  const [user, setUser] = useState();
+  const navigate = useNavigate();
+  useEffect(() => {
+    axios.get("http://localhost:3000/logged-in").then((res) => {
+      if (res.data.username === "") {
+        navigate("/login");
+      } else {
+        setOption(() => res.data.lastAccessedScreen);
+        setUser({
+          username: res.data.username,
+          role: res.data.role,
+          lastAccessedScreen: option,
+        });
+      }
+    });
+  }, []);
+  const changeOption = (e, value) => {
     e.preventDefault();
-    this.updateLastAccessedScreen(value);
-    this.state.page.option = value;
-    this.setState(this.state);
+    updateLastAccessedScreen(value);
+    setOption(() => value);
   };
-  updateLastAccessedScreen = (value) => {
+  const updateLastAccessedScreen = (value) => {
     if (value === 11 || value === 10) {
       return;
     }
-    this.props.mainCom.state.user.lastAccessedScreen = value;
+    setOption(() => value);
     axios
-      .post(
-        "http://localhost:3000/update-last-accessed",
-        this.props.mainCom.state.user
-      )
+      .post("http://localhost:3000/update-last-accessed", user)
       .then((resp) => {
         //
       });
   };
-  navBarStyle = {
-    display: "flex",
-    gap: "1rem",
-    alignItems: "center",
-  };
-  changeHoverNav = (val) => {
-    this.setState({ hoverNav: val });
-  };
-  menus = [
+  const menus = [
     { name: "Dashboard", menuValue: 1, icon: <Dashboard /> },
     { name: "Invoice", menuValue: 2, icon: <Receipt /> },
     { name: "Customer", menuValue: 3, icon: <People /> },
@@ -75,96 +77,69 @@ class MainPage extends Component {
     { name: "Settings", menuValue: 10, icon: <Settings /> },
     { name: "Logout", menuValue: 11, icon: <Logout /> },
   ];
-  render() {
-    const contentArea = () => {
-      switch (this.state.page.option) {
-        case 1:
-          return <DashboardPage />;
-        case 2:
-          return <Invoice />;
-        case 3:
-          return <NewCustomer />;
-        case 4:
-          return <MedicinePage />;
-        case 5:
-          return <PharmacistPage />;
-        case 6:
-          return <DeliveryMenPage />;
-        case 7:
-          return <SalesReportsPage />;
-        case 8:
-          return <PurchasePage username={this.props.mainCom.state.username} />;
-        case 9:
-          return <ReportsPage />;
-        case 10:
-          return (
-            <SettingsPage username={this.props.mainCom.state.user.username} />
-          );
-        case 11:
-          return <LogoutPage />;
-        default:
-          return;
-      }
-    };
-    return (
+
+  const contentArea = () => {
+    switch (option) {
+      case 1:
+        return <DashboardPage />;
+      case 2:
+        return <Invoice />;
+      case 3:
+        return <NewCustomer />;
+      case 4:
+        return <MedicinePage />;
+      case 5:
+        return <PharmacistPage />;
+      case 6:
+        return <DeliveryMenPage />;
+      case 7:
+        return <SalesReportsPage />;
+      case 8:
+        return <PurchasePage username={user.username} />;
+      case 9:
+        return <ReportsPage />;
+      case 10:
+        return <SettingsPage username={user.username} />;
+      case 11:
+        return <LogoutPage />;
+      default:
+        return;
+    }
+  };
+  return (
+    <div>
       <div>
-        <div class="layout">
-          <a
-            class="header"
-            href="#0"
-            style={{
-              fontFamily: "roboto",
-              backgroundColor: "white",
-              color: "black",
-              textDecoration: "none",
-            }}
-          >
-            <i class="fa">
-              <h5>Pharmacy Management</h5>
-            </i>
-            <div style={this.navBarStyle}>
-              <Avatar sx={{ bgcolor: blue[500] }}>
-                {this.props.mainCom.state.user.username[0].toUpperCase()}
-              </Avatar>
-              Hello {this.props.mainCom.state.user.username}
-            </div>
-          </a>
-
-          <div class="sidebar">
-            <ul>
-              {this.menus.map((menu) => (
-                <li style={{ marginLeft: "25px" }}>
-                  <a
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                    class={
-                      "sidebar-list-item" +
-                      (this.state.page.option === menu.menuValue
-                        ? " active"
-                        : "")
-                    }
-                    onClick={(e) => this.changeOption(e, menu.menuValue)}
-                    href="#0"
-                  >
-                    <div>{menu.icon}</div>
-                    <div>
-                      <em style={{ marginLeft: "-40px" }}>{menu.name}</em>
-                    </div>
-                  </a>
-                </li>
-              ))}
-            </ul>
+        <a>
+          <i>
+            <h5>Pharmacy Management</h5>
+          </i>
+          <div>
+            <Avatar sx={{ bgcolor: blue[500] }}>
+              {user ? user.username[0].toUpperCase() : ""}
+            </Avatar>
+            Hello {user ? user.username : ""}
           </div>
+        </a>
 
-          <main class="content" style={{ height: 550, width: 300 }}>
-            {contentArea()}
-          </main>
+        <div class="sidebar">
+          <ul>
+            {menus.map((menu) => (
+              <li style={{ marginLeft: "25px" }}>
+                <a onClick={(e) => changeOption(e, menu.menuValue)}>
+                  <div>{menu.icon}</div>
+                  <div>
+                    <em>{menu.name}</em>
+                  </div>
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
+
+        <main class="content">{contentArea()}</main>
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 export default MainPage;

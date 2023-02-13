@@ -1,41 +1,21 @@
 import React, { Component } from 'react'
-import './App.css';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.css";
 import MainPage from './Screen/MainPage/MainPage';
 import LoginPage from './Screen/LoginPage/LoginPage';
+import NewUser from './Screen/NewUserPage/NewUserPage';
+
 class App extends Component {
-  state = {
-    user: {
-      username: '',
-      role: '',
-      lastAccessedScreen: 0,
-    }
-  }
-  
-  handleLogin = () => {
-    this.setState(this.state.user);
-  }
-  reloadHandleLogin = (userData) => {
-    if (!userData.username) {
-      return;
-    }
-    this.state.user.username = userData.username;
-    this.state.user.role = userData.role;
-    this.state.user.lastAccessedScreen = userData.lastAccessedScreen;
-    this.setState(this.state.user);
-    return;
-  }
-  inOrOut = () => {
-    if (this.state.user.username === '') {
-      return <LoginPage mainCom={this} />;
-    }
-    else {
-      return <MainPage mainCom={this} />;
-    }
-  }
   render() {
     return (
       <div className="App">
-        {this.inOrOut()}
+        <BrowserRouter>
+      <Routes>
+          <Route path="/" element={<MainPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/newuser" element={<NewUser />} />
+      </Routes>
+    </BrowserRouter>
       </div>
     );
   }

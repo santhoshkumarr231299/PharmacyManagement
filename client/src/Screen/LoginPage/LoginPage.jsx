@@ -1,112 +1,94 @@
-import React, { Component } from "react";
+import React, { useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./styles.css";
+import { Button, Form, Card } from "react-bootstrap";
 
-class LoginPage extends Component {
-  componentDidMount() {
-    console.log(this.props.mainCom.state.user.username);
+function LoginPage() {
+  const username = useRef();
+  const password = useRef();
+
+  const navigate = useNavigate();
+  useEffect(() => {
     axios.get("http://localhost:3000/logged-in").then((res) => {
-      this.props.mainCom.reloadHandleLogin(res.data);
       if (res.data.username !== "") {
-        console.log("called");
-        return;
+        navigate("/");
       }
     });
-  }
-  validateLogin(e) {   
+  }, []);
+  const validateLogin = (e) => {
     e.preventDefault();
-    const user = {
-      username: document.getElementById("username").value,
-      password: document.getElementById("password").value,
-    };
-    axios.post("http://localhost:3000/login", user).then((res) => {
-      if (res.data.message === "success") {
-        console.log(res.data);
-        this.props.mainCom.state.user.username = res.data.username;
-        this.props.mainCom.state.user.role = res.data.role;
-        this.props.mainCom.state.user.lastAccessedScreen =
-          res.data.lastAccessedScreen;
-        this.props.mainCom.handleLogin();
-      } else {
-        document.getElementById("alert").innerHTML = "Login Failed";
-      }
+    console.log({
+      username: username.current.value,
+      password: password.current.value,
     });
-  }
-  state = {};
-  render() {
-    return (
-      <div className="container">
-        <div className="form-box">
-          <div className="header-form">
-            <h4 className="text-primary text-center">
-              <i
-                className="fa fa-user-circle"
-                style={{ fontSize: "110px" }}
-              ></i>
-            </h4>
-            <div className="image"></div>
+    axios
+      .post("http://localhost:3000/login", {
+        username: username.current.value,
+        password: password.current.value,
+      })
+      .then((res) => {
+        if (res.data.message === "success") {
+          // navigate("/");
+        } else {
+          document.getElementById("alert").innerHTML = "Login Failed";
+        }
+      });
+  };
+
+  const fields = [
+    {
+      fieldName: "username",
+      labelName: "Username",
+      type: "text",
+      required: true,
+    },
+    {
+      fieldName: "password",
+      labelName: "Password",
+      type: "password",
+      required: true,
+    },
+  ];
+
+  return (
+    <div className="container">
+      <Card
+        style={{
+          minHeight: "250px",
+          maxWidth: "400px",
+        }}
+      >
+        <Form
+          style={{
+            margin: "2vh",
+          }}
+        >
+          {fields.map((field) => (
+            <Form.Group className="mb-3" controlId={field.fieldName}>
+              <Form.Label>{field.labelName}</Form.Label>
+              <Form.Control
+                type={field.type}
+                ref={field.fieldName === "username" ? username : password}
+                placeholder={field.labelName}
+              />
+              <Form.Text className="text-muted"></Form.Text>
+            </Form.Group>
+          ))}
+          <Button
+            variant="primary"
+            type="submit"
+            onClick={(e) => validateLogin(e)}
+          >
+            LOGIN
+          </Button>
+          <div>
+            <a href="#">Forgot your password</a>
           </div>
-          <div className="body-form">
-            <form>
-              <div className="input-group mb-3">
-                <div className="input-group-prepend">
-                  <span className="input-group-text">
-                    <i class="fa fa-user"></i>
-                  </span>
-                </div>
-                <input
-                  id="username"
-                  type="text"
-                  className="form-control"
-                  placeholder="Username"
-                  required
-                />
-              </div>
-              <div className="input-group mb-3">
-                <div className="input-group-prepend">
-                  <span className="input-group-text">
-                    <i class="fa fa-lock"></i>
-                  </span>
-                </div>
-                <input
-                  id="password"
-                  type="password"
-                  className="form-control"
-                  placeholder="Password"
-                  required
-                />
-              </div>
-              <button
-                type="submit"
-                className="btn btn-secondary btn-block"
-                onClick={(e) => this.validateLogin(e)}
-              >
-                LOGIN
-              </button>
-              <div className="message">
-                <div></div>
-                <div>
-                  <a href="#">Forgot your password</a>
-                </div>
-              </div>
-            </form>
-            <span id="alert"></span>
-            {/* <div className="social">
-              <a href="#">
-                <i className="fab fa-facebook"></i>
-              </a>
-              <a href="#">
-                <i className="fab fa-twitter-square"></i>
-              </a>
-              <a href="#">
-                <i className="fab fa-google"></i>
-              </a>
-            </div> */}
-          </div>
-        </div>
-      </div>
-    );
-  }
+          <span id="alert"></span>
+        </Form>
+      </Card>
+    </div>
+  );
 }
 
 export default LoginPage;

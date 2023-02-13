@@ -37,7 +37,6 @@ app.get('/logged-in', (req, res) => {
       })
     }
     else {
-      console.log(session.user.username);
       connection.query("SELECT * FROM USERS WHERE USERNAME = ?", [session.user.username], (err, result, fields) => {
         res.status(200).send({
           username: session.user.username,
@@ -337,7 +336,6 @@ app.get("/get-reports", (req,res) => {
         // role : report.role,
       })
     })
-    console.log(result);
     res.status(200).send(data);
   })
 });
