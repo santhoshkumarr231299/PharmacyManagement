@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-// import "./styles.css";
+import Navbar from "./Navbar";
 import DashboardPage from "../Dashboard/Dashboard";
 import Invoice from "../Invoice/NewInvoice";
 import NewCustomer from "../Customer/NewCustomer";
@@ -13,9 +13,9 @@ import DeliveryMenPage from "../DelvieryMenPage/DeliveryMenPage";
 import SalesReportsPage from "../SalesReport/SalesReportPage";
 import PurchasePage from "../PurchasePage/PurchasePage";
 import SettingsPage from "../SettingsPage/Settings";
+import { Card } from "react-bootstrap";
+import ListGroup from "react-bootstrap/ListGroup";
 import axios from "axios";
-import { Avatar } from "@mui/material";
-import { blue } from "@mui/material/colors";
 import {
   Dashboard,
   Receipt,
@@ -30,7 +30,7 @@ import {
   Settings,
 } from "@mui/icons-material";
 
-function MainPage() {
+function MainPage(props) {
   const [option, setOption] = useState(0);
   const [user, setUser] = useState();
   const navigate = useNavigate();
@@ -43,23 +43,30 @@ function MainPage() {
         setUser({
           username: res.data.username,
           role: res.data.role,
-          lastAccessedScreen: option,
+          lastAccessedScreen: res.data.lastAccessedScreen,
         });
+        console.log(res.data.lastAccessedScreen);
+        setOption(res.data.lastAccessedScreen);
       }
     });
   }, []);
   const changeOption = (e, value) => {
     e.preventDefault();
-    updateLastAccessedScreen(value);
-    setOption(() => value);
+    setOption(value);
+    updateLastAccessedScreen(e, value);
   };
-  const updateLastAccessedScreen = (value) => {
+  const updateLastAccessedScreen = (e, value) => {
+    e.preventDefault();
     if (value === 11 || value === 10) {
       return;
     }
-    setOption(() => value);
+
     axios
-      .post("http://localhost:3000/update-last-accessed", user)
+      .post("http://localhost:3000/update-last-accessed", {
+        username: user.username,
+        role: user.role,
+        lastAccessedScreen: value,
+      })
       .then((resp) => {
         //
       });
@@ -109,34 +116,52 @@ function MainPage() {
   return (
     <div>
       <div>
-        <a>
-          <i>
-            <h5>Pharmacy Management</h5>
-          </i>
-          <div>
-            <Avatar sx={{ bgcolor: blue[500] }}>
-              {user ? user.username[0].toUpperCase() : ""}
-            </Avatar>
-            Hello {user ? user.username : ""}
-          </div>
-        </a>
-
-        <div class="sidebar">
-          <ul>
+        <Navbar username={user ? user.username : " "} theme={props.theme} />
+      </div>
+      <div
+        style={{
+          display: "flex",
+          gap: "2rem",
+        }}
+      >
+        <div>
+          <ListGroup style={{ marginTop: "30px" }}>
             {menus.map((menu) => (
-              <li style={{ marginLeft: "25px" }}>
-                <a onClick={(e) => changeOption(e, menu.menuValue)}>
+              <ListGroup.Item
+                style={{
+                  width: "250px",
+                  color: option === menu.menuValue ? "purple" : "",
+                  fontWeight: option === menu.menuValue ? "bold" : "",
+                }}
+              >
+                <a
+                  style={{
+                    display: "flex",
+                    gap: "10px",
+                    margin: "8px 0 8px 0",
+                  }}
+                  onClick={(e) => changeOption(e, menu.menuValue)}
+                >
                   <div>{menu.icon}</div>
                   <div>
-                    <em>{menu.name}</em>
+                    <span>{menu.name}</span>
                   </div>
                 </a>
-              </li>
+              </ListGroup.Item>
             ))}
-          </ul>
+          </ListGroup>
         </div>
-
-        <main class="content">{contentArea()}</main>
+        <div>
+          <main
+            style={{
+              marginTop: "30px",
+              padding: "20px 0 20px 20px",
+            }}
+            class="content"
+          >
+            {contentArea()}
+          </main>
+        </div>
       </div>
     </div>
   );

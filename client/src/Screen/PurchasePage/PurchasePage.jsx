@@ -115,7 +115,7 @@ function MedicinePage(props) {
               onChange={(e) => updateMedicines(e)}
             />
             <Tooltip title="Cart" onClick={(e) => changeOption(e)} arrow>
-              <Badge badgeContent={cartItemSize} color="primary">
+              <Badge badgeContent={cartItemSize} color="warning">
                 <ShoppingCartIcon
                   color="action"
                   onClick={(e) => console.log("clicked")}
@@ -298,7 +298,11 @@ function CartPage(props) {
               }}
             >
               <h6>{props.username + "'s"} Cart</h6>
-              <Button onClick={(e) => changeOption(e)} variant="contained">
+              <Button
+                onClick={(e) => changeOption(e)}
+                variant="contained"
+                style={{ backgroundColor: "purple" }}
+              >
                 Back
               </Button>
             </div>

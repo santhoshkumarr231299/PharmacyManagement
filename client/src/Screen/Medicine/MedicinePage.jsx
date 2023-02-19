@@ -70,6 +70,7 @@ function MedicinePage(props) {
     <Paper
       elevation={3}
       style={{
+        textAlign: "right",
         alignSelf: "center",
         margin: "auto",
         backgroundColor: "white",
@@ -81,9 +82,11 @@ function MedicinePage(props) {
       <Button
         style={{
           marginBottom: "20px",
-          marginTop: "10px",
+          marginTop: "20px",
+          marginRight: "15px",
           position: "",
           right: 50,
+          backgroundColor: "purple",
         }}
         variant="contained"
         onClick={() => props.addMedStatus(true)}
@@ -238,6 +241,7 @@ function AddMedicinePage(props) {
       <Paper
         elevation={3}
         style={{
+          textAlign: "center",
           marginBottom: "20px",
           backgroundColor: "white",
           width: "1135px",
@@ -248,9 +252,9 @@ function AddMedicinePage(props) {
         <Button
           style={{
             marginBottom: "10px",
-            marginTop: "10px",
-            position: "",
-            right: 50,
+            marginTop: "20px",
+            right: -450,
+            backgroundColor: "purple",
           }}
           variant="contained"
           onClick={() => props.addMedStatus(false)}
@@ -304,7 +308,11 @@ function AddMedicinePage(props) {
             ))}
 
             <Button
-              style={{ marginBottom: "20px", marginTop: "20px" }}
+              style={{
+                marginBottom: "20px",
+                marginTop: "20px",
+                backgroundColor: "purple",
+              }}
               variant="contained"
               onClick={(e) => submitReport(e)}
             >

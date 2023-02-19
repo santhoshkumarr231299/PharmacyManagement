@@ -32,6 +32,7 @@ export default function Settings(props) {
       <Paper
         elevation={3}
         style={{
+          textAlign: "center",
           alignSelf: "center",
           margin: "auto",
           backgroundColor: "white",
@@ -43,9 +44,10 @@ export default function Settings(props) {
         <Button
           style={{
             marginBottom: "20px",
-            marginTop: "10px",
-            position: "",
-            right: 50,
+            marginTop: "20px",
+            margin: "15px",
+            right: -400,
+            backgroundColor: "purple",
           }}
           variant="contained"
           onClick={(e) => callChangePass(e)}
@@ -148,7 +150,7 @@ function UserDetails(props) {
     <div>
       {userFields.map((userField) => (
         <div>
-          <input
+          <TextField
             key={userField.id}
             style={{ margin: "10px" }}
             label={userField.labelName}
@@ -168,8 +170,7 @@ function UserDetails(props) {
         style={{
           marginBottom: "20px",
           marginTop: "10px",
-          position: "",
-          right: 50,
+          backgroundColor: "purple",
         }}
         variant="contained"
         onClick={(e) => updateDetails(e)}
@@ -286,10 +287,9 @@ function ChangePass(props) {
       ))}
       <Button
         style={{
+          backgroundColor: "purple",
           marginBottom: "20px",
           marginTop: "10px",
-          position: "",
-          right: 50,
         }}
         variant="contained"
         onClick={(e) => updatePassword(e)}

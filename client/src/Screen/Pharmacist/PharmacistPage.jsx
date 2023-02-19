@@ -45,6 +45,7 @@ function MedicinePage(props) {
     <Paper
       elevation={3}
       style={{
+        textAlign: "right",
         alignSelf: "center",
         margin: "auto",
         backgroundColor: "white",
@@ -56,9 +57,9 @@ function MedicinePage(props) {
       <Button
         style={{
           marginBottom: "20px",
-          marginTop: "10px",
-          position: "",
-          right: 50,
+          marginTop: "20px",
+          right: 65,
+          backgroundColor: "purple",
         }}
         variant="contained"
         onClick={() => props.addMedStatus(true)}
@@ -119,7 +120,11 @@ function AddMedicinePage(props) {
             <br />
 
             <Button
-              style={{ marginBottom: "20px", marginTop: "20px" }}
+              style={{
+                marginBottom: "20px",
+                marginTop: "20px",
+                backgroundColor: "purple",
+              }}
               variant="contained"
             >
               Add Pharmacist

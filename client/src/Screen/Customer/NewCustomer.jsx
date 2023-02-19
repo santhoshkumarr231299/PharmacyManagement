@@ -45,6 +45,7 @@ function CustomerPage(props) {
     <Paper
       elevation={3}
       style={{
+        textAlign: "right",
         alignSelf: "center",
         margin: "auto",
         backgroundColor: "white",
@@ -56,9 +57,9 @@ function CustomerPage(props) {
       <Button
         style={{
           marginBottom: "20px",
-          marginTop: "10px",
-          position: "",
-          right: 50,
+          marginTop: "20px",
+          right: 65,
+          backgroundColor: "purple",
         }}
         variant="contained"
         onClick={() => props.addMedStatus(true)}

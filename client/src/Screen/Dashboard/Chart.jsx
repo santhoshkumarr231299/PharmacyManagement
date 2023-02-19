@@ -1,32 +1,41 @@
-import React from "react";
-import Paper from "@mui/material/Paper";
+import { Bar } from "react-chartjs-2";
+import { CategoryScale } from "chart.js";
+import { Chart as ChartJS } from "chart.js/auto";
 import {
-  ArgumentAxis,
-  ValueAxis,
-  Chart,
-  LineSeries,
-} from "@devexpress/dx-react-chart-material-ui";
+  IonTitle,
+  useIonViewWillEnter,
+  useIonViewWillLeave,
+} from "@ionic/react";
 
-const App = () => {
-  // Sample data
-  const data = [
-    { argument: "Monday", value: 30 },
-    { argument: "Tuesday", value: 20 },
-    { argument: "Wednesday", value: 10 },
-    { argument: "Thursday", value: 50 },
-    { argument: "Friday", value: 60 },
-  ];
-  console.log("hello");
+const Graph = () => {
+  useIonViewWillEnter(() => {
+    ChartJS.register(CategoryScale);
+  }, []);
+
+  useIonViewWillLeave(() => {
+    ChartJS.unregister(CategoryScale);
+  }, []);
+
+  const data = {
+    labels: ["Billable", "Non Billable"],
+    datasets: [
+      {
+        label: "Billable Vs. Non Billable",
+        backgroundColor: ["#36a2eb", "rgba(255,99,132,0.2)"],
+        borderColor: "rgba(255,99,132,1)",
+        borderWidth: 1,
+        hoverBackgroundColor: "rgba(255,99,132,0.4)",
+        hoverBorderColor: "rgba(255,99,132,1)",
+        data: [65, 59],
+      },
+    ],
+  };
+
   return (
-    <Paper style={{ height: "350px" }}>
-      <Chart data={data}>
-        <ArgumentAxis tickSize={100} />
-        <ValueAxis tickSize={100} />
-
-        <LineSeries valueField="value" argumentField="argument" />
-      </Chart>
-    </Paper>
+    <>
+      <Bar data={data} />
+    </>
   );
 };
 
-export default App;
+export default Graph;

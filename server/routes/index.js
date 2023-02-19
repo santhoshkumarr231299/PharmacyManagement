@@ -158,7 +158,7 @@ app.get('/', function (req, res, next) {
 
 app.post('/update-last-accessed', (req, res) => {
   connection.query('UPDATE USERS SET LAST_ACCESSED = ? WHERE USERNAME = ?', [req.body.lastAccessedScreen, req.body.username], (err, result, fields) => {
-    // console.log(result);
+    res.send({message:"success"})
   });
 })
 

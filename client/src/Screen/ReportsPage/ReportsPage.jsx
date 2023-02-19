@@ -56,6 +56,7 @@ function ReportPage(props) {
     <Paper
       elevation={3}
       style={{
+        textAlign: "right",
         alignSelf: "center",
         margin: "auto",
         backgroundColor: "white",
@@ -68,8 +69,9 @@ function ReportPage(props) {
         style={{
           marginBottom: "20px",
           marginTop: "10px",
-          position: "",
+          marginRight: "15px",
           right: 50,
+          backgroundColor: "purple",
         }}
         variant="contained"
         onClick={() => props.addMedStatus(true)}
@@ -167,6 +169,7 @@ function AddReportPage(props) {
       <Paper
         elevation={3}
         style={{
+          textAlign: "center",
           marginBottom: "20px",
           backgroundColor: "white",
           width: "1135px",
@@ -177,9 +180,9 @@ function AddReportPage(props) {
         <Button
           style={{
             marginBottom: "20px",
-            marginTop: "10px",
-            position: "",
-            right: 50,
+            marginTop: "20px",
+            right: -450,
+            backgroundColor: "purple",
           }}
           variant="contained"
           onClick={() => props.addMedStatus(false)}
@@ -211,7 +214,11 @@ function AddReportPage(props) {
 
             <Button
               onClick={(e) => submitReport(e)}
-              style={{ marginBottom: "20px", marginTop: "20px" }}
+              style={{
+                marginBottom: "20px",
+                marginTop: "20px",
+                backgroundColor: "purple",
+              }}
               variant="contained"
             >
               Add Report

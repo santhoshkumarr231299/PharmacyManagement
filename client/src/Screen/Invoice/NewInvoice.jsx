@@ -46,6 +46,7 @@ function InvoicePage(props) {
       elevation={3}
       style={{
         alignSelf: "center",
+        textAlign: "right",
         margin: "auto",
         backgroundColor: "white",
         width: "1135px",
@@ -55,8 +56,10 @@ function InvoicePage(props) {
     >
       <Button
         style={{
+          backgroundColor: "purple",
           marginBottom: "20px",
-          marginTop: "10px",
+          marginTop: "20px",
+          marginRight: "15px",
           position: "",
           right: 50,
         }}
