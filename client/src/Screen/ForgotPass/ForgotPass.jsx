@@ -3,16 +3,15 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Button, Form, Card, Alert } from "react-bootstrap";
 
-function NewUserPage() {
+function ForgotPassPage() {
   const [alertType, setAlertType] = useState();
   const [alert, setAlert] = useState();
   const [openAlert, setOpenAlert] = useState(false);
   const [hoverColor, setHoverColor] = useState("black");
 
   const username = useRef();
-  const password = useRef();
-  const email = useRef();
-  const phoneNumber = useRef();
+  const newPassword = useRef();
+  const conNewPassword = useRef();
 
   const navigate = useNavigate();
 
@@ -25,47 +24,43 @@ function NewUserPage() {
       reference: username,
     },
     {
-      fieldName: "password",
+      fieldName: "newpass",
+      type: "text",
+      labelName: "New Password",
+      required: true,
+      reference: newPassword,
+    },
+    {
+      fieldName: "confirmnewpass",
       type: "password",
-      labelName: "Password",
+      labelName: "Confirm New Password",
       required: true,
-      reference: password,
-    },
-    {
-      fieldName: "phone",
-      type: "number",
-      labelName: "Phone Number",
-      required: true,
-      reference: phoneNumber,
-    },
-    {
-      fieldName: "email",
-      type: "email",
-      labelName: "Email",
-      required: true,
-      reference: email,
+      reference: conNewPassword,
     },
   ];
   const createUser = (e) => {
     e.preventDefault();
-    const user = {
+    const userForgotPassDetails = {
       username: username.current.value,
-      password: password.current.value,
+      newPassword: newPassword.current.value,
+      conNewPassword: conNewPassword.current.value,
     };
-    console.log(user);
-    axios.post("http://localhost:3000/new-user", user).then((resp) => {
-      if (resp.data) {
-        if (resp.data.message === "success") {
-          setAlertType("success");
-          setAlert(() => "New User Created Successfully");
-          setOpenAlert(true);
-        } else {
-          setAlertType("danger");
-          setAlert(() => "Failed to Create User");
-          setOpenAlert(true);
-        }
-      }
-    });
+    console.log(userForgotPassDetails);
+    // axios
+    //   .post("http://localhost:3000/new-user", userForgotPassDetails)
+    //   .then((resp) => {
+    //     if (resp.data) {
+    //       if (resp.data.message === "success") {
+    //         setAlertType("success");
+    //         setAlert(() => "New User Created Successfully");
+    //         setOpenAlert(true);
+    //       } else {
+    //         setAlertType("danger");
+    //         setAlert(() => "Failed to Create User");
+    //         setOpenAlert(true);
+    //       }
+    //     }
+    //   });
   };
   const goToLoginPage = () => {
     navigate("/login");
@@ -144,7 +139,7 @@ function NewUserPage() {
                   color: hoverColor,
                 }}
               >
-                Already a user?
+                Go to Login Page...
               </a>
             </div>
           </Form>
@@ -154,4 +149,4 @@ function NewUserPage() {
   );
 }
 
-export default NewUserPage;
+export default ForgotPassPage;

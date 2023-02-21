@@ -155,7 +155,7 @@ function UserDetails(props) {
             style={{ margin: "10px" }}
             label={userField.labelName}
             disabled={userField.status === "disabled"}
-            defaultValue={userField.value}
+            defaultValue={userField.value ? userField.value : ""}
             variant="outlined"
             onChange={(e) => updateValues(e, userField.id)}
             InputLabelProps={{
@@ -254,7 +254,6 @@ function ChangePass(props) {
   return (
     <div
       style={{
-        display: "",
         marginLeft: "auto",
         marginRight: "auto",
       }}

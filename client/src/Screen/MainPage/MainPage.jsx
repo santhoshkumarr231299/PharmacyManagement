@@ -116,7 +116,7 @@ function MainPage(props) {
   return (
     <div>
       <div>
-        <Navbar username={user ? user.username : " "} theme={props.theme} />
+        <Navbar username={user ? user.username : " "} />
       </div>
       <div
         style={{

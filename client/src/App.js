@@ -5,6 +5,7 @@ import "./App.css";
 import MainPage from './Screen/MainPage/MainPage';
 import LoginPage from './Screen/LoginPage/LoginPage';
 import NewUser from './Screen/NewUserPage/NewUserPage';
+import ForgotPassPage from './Screen/ForgotPass/ForgotPass';
 
 class App extends Component {
   theme = {
@@ -19,6 +20,7 @@ class App extends Component {
           <Route path="/" element={<MainPage theme = {this.theme} />} />
           <Route path="/login" element={<LoginPage theme = {this.theme} />} />
           <Route path="/newuser" element={<NewUser theme = {this.theme} />} />
+          <Route path="/forgotpass" element={<ForgotPassPage theme = {this.theme} />} />
       </Routes>
     </BrowserRouter>
       </div>

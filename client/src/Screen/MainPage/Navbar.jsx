@@ -24,6 +24,7 @@ export default function Navbar(props) {
 
         <div
           style={{
+            marginLeft: "1100px",
             display: "flex",
             gap: "1rem",
             alignItems: "center",
@@ -33,6 +34,7 @@ export default function Navbar(props) {
             {props.username[0].toUpperCase()}
           </Avatar>
           Hello {props.username[0].toUpperCase() + props.username.substring(1)}
+          <div></div>
         </div>
       </a>
     </nav>

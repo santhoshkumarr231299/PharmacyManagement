@@ -7,6 +7,7 @@ function LoginPage() {
   const [alertType, setAlertType] = useState();
   const [alert, setAlert] = useState();
   const [openAlert, setOpenAlert] = useState(false);
+  const [hoverColor, setHoverColor] = useState("black");
 
   const username = useRef();
   const password = useRef();
@@ -110,6 +111,7 @@ function LoginPage() {
             <Button
               style={{
                 width: "100%",
+                backgroundColor: "purple",
               }}
               variant="primary"
               type="submit"
@@ -123,7 +125,16 @@ function LoginPage() {
                 textAlign: "center",
               }}
             >
-              <a onClick={0}>Forgot your password</a>
+              <a
+                onMouseEnter={() => setHoverColor("purple")}
+                onMouseLeave={() => setHoverColor("black")}
+                style={{
+                  color: hoverColor,
+                }}
+                onClick={() => navigate("/forgotpass")}
+              >
+                Forgot your password?
+              </a>
             </div>
           </Form>
         </Card.Body>
