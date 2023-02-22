@@ -8,6 +8,7 @@ function LoginPage() {
   const [alert, setAlert] = useState();
   const [openAlert, setOpenAlert] = useState(false);
   const [hoverColor, setHoverColor] = useState("black");
+  const [opacity, setOpacity] = useState("60%");
 
   const username = useRef();
   const password = useRef();
@@ -80,7 +81,31 @@ function LoginPage() {
             textAlign: "center",
           }}
         >
-          Sign In
+          <div
+            style={{
+              display: "flex",
+              gap: "2rem",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <div style={{ color: "purple" }}>Sign In</div>
+            <div
+              style={{
+                fontSize: "80%",
+                opacity: opacity,
+              }}
+              onMouseEnter={() => {
+                setOpacity("100%");
+              }}
+              onMouseLeave={() => {
+                setOpacity("60%");
+              }}
+              onClick={() => navigate("/newuser")}
+            >
+              New User?
+            </div>
+          </div>
         </Card.Title>
         <Card.Body>
           <Form

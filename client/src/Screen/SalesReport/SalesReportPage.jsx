@@ -38,6 +38,7 @@ export default function SalesReportPage(props) {
       }}
     >
       <div>
+        <div style={{ paddingTop: "50px" }}></div>
         <DataGrid
           style={{
             justifyContent: "center",

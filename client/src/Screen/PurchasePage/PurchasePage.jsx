@@ -11,6 +11,18 @@ import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import Tooltip from "@mui/material/Tooltip";
+import CartPage1 from "./CartPage";
+import {
+  MDBInput,
+  MDBBtn,
+  MDBCard,
+  MDBCardBody,
+  MDBCardImage,
+  MDBCol,
+  MDBContainer,
+  MDBIcon,
+  MDBRow,
+} from "mdb-react-ui-kit";
 
 export default function MainMedicinePage(props) {
   const [option, setOption] = useState(0);
@@ -178,6 +190,7 @@ function MedicinePage(props) {
 function CartPage(props) {
   const [medList, setMedList] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
+  const [mouseHover, setMouseHover] = useState(false);
 
   const updateTotAmt = () => {
     let amt = 0;
@@ -268,14 +281,14 @@ function CartPage(props) {
           margin: "auto",
           backgroundColor: "white",
           width: "1135px",
-          height: "600px",
+          minHeight: "600px",
           color: "Black",
         }}
       >
         <div
           style={{
             width: "1055px",
-            height: "560px",
+            minHeight: "560px",
             marginTop: "20px",
             margin: "auto",
             alignSelf: "center",
@@ -285,9 +298,11 @@ function CartPage(props) {
             style={{
               width: "1095px",
               height: "100px",
+              paddingRight: 43,
             }}
           >
             <div
+              className="float-end"
               style={{
                 paddingTop: "20px",
                 display: "flex",
@@ -297,7 +312,12 @@ function CartPage(props) {
                 justifyContent: "center",
               }}
             >
-              <h6>{props.username + "'s"} Cart</h6>
+              <span className="h3">
+                {props.username[0].toUpperCase() +
+                  props.username.substr(1) +
+                  "'s"}{" "}
+                Cart
+              </span>
               <Button
                 onClick={(e) => changeOption(e)}
                 variant="contained"
@@ -308,76 +328,139 @@ function CartPage(props) {
             </div>
           </div>
           <div>
-            <table>
-              <thead>
-                <tr>
-                  <th>S. No.</th>
-                  <th>Medicine Name</th>
-                  <th>Quantity</th>
-                  <th>Price</th>
-                  <th>Delete</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>----</td>
-                  <td>-------------------------</td>
-                  <td>-------------------------</td>
-                  <td>-----------------</td>
-                  <td>----</td>
-                </tr>
-                {medList.map((med) => (
-                  <tr>
-                    <td>{med.id}</td>
-                    <td align="left">{med.medName}</td>
-                    <td>
-                      <TextField
-                        style={{
-                          margin: 0,
-                          padding: 0,
-                          width: "80px",
-                        }}
-                        id="filled-number"
-                        type="number"
-                        onChange={(e) => updateQuantity(e, med.mid)}
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                        variant="outlined"
-                        defaultValue={med.quantity}
-                      />
-                    </td>
-                    <td>{med.price}</td>
-                    <td>
-                      <div
-                        onClick={(e) => handleDelete(e, med.id)}
-                        key={med.mid}
-                      >
-                        <IconButton
-                          aria-label="delete"
-                          onClick={(e) => deleteItem(e, med.mid)}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                <tr>
-                  <td>----</td>
-                  <td>-------------------------</td>
-                  <td>-------------------------</td>
-                  <td>-----------------</td>
-                  <td>----</td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <th>Total</th>
-                  <td>{totalAmount}</td>
-                </tr>
-              </tbody>
-            </table>
+            {medList.map((med) => (
+              <div>
+                <MDBCard
+                  style={{ backgroundColor: "#fcfafa" }}
+                  className="mb-2"
+                >
+                  <MDBCardBody className="p-1">
+                    <MDBRow className="align-items-center">
+                      <MDBCol md="1">
+                        <MDBCardImage
+                          style={{ marginLeft: "20px" }}
+                          fluid
+                          src="https://www.gocnetworking.com/wp-content/uploads/2020/07/AdobeStock_351037752-scaled.jpeg"
+                          alt="Generic placeholder image"
+                        />
+                      </MDBCol>
+                      <MDBCol md="2" className="d-flex justify-content-center">
+                        <div>
+                          <p className="lead fw-normal mb-0">{med.id}</p>
+                        </div>
+                      </MDBCol>
+                      <MDBCol md="2" className="d-flex justify-content-center">
+                        <div>
+                          <p className="lead fw-normal mb-0">
+                            <MDBIcon
+                              fas
+                              icon="circle me-2"
+                              style={{ color: "#fdd8d2" }}
+                            />
+                            {med.medName}
+                          </p>
+                        </div>
+                      </MDBCol>
+                      <MDBCol md="2" className="d-flex justify-content-center">
+                        <div>
+                          <p className="lead fw-normal mb-0">
+                            <TextField
+                              style={{
+                                margin: 10,
+                                padding: 0,
+                                width: "80px",
+                              }}
+                              label="Quantity"
+                              id="filled-number"
+                              type="number"
+                              onChange={(e) => updateQuantity(e, med.mid)}
+                              InputLabelProps={{
+                                shrink: true,
+                              }}
+                              variant="outlined"
+                              defaultValue={med.quantity}
+                            />
+                          </p>
+                        </div>
+                      </MDBCol>
+                      <MDBCol md="2" className="d-flex justify-content-center">
+                        <div>
+                          <p className="lead fw-normal mb-0">₹ {med.price}</p>
+                        </div>
+                      </MDBCol>
+                      <MDBCol md="2" className="d-flex justify-content-center">
+                        <div>
+                          <p className="lead fw-normal mb-0">
+                            <div
+                              onClick={(e) => handleDelete(e, med.id)}
+                              key={med.mid}
+                            >
+                              <IconButton
+                                aria-label="delete"
+                                onClick={(e) => deleteItem(e, med.mid)}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </div>
+                          </p>
+                        </div>
+                      </MDBCol>
+                    </MDBRow>
+                  </MDBCardBody>
+                </MDBCard>
+              </div>
+            ))}
+            <MDBCard className="mb-5">
+              <MDBCardBody
+                className="p-4"
+                style={{ backgroundColor: "#fcfafa" }}
+              >
+                <div className="float-end">
+                  <p className="mb-0 me-5 d-flex align-items-center">
+                    <span className="small text-muted me-2">Order total:</span>
+                    <span className="lead fw-normal">₹{totalAmount}</span>
+                  </p>
+                </div>
+              </MDBCardBody>
+            </MDBCard>
+          </div>
+          <div>
+            <MDBCard className="mb-4" style={{ width: "100%" }}>
+              <MDBCardBody
+                className="p-2 d-flex flex-row"
+                style={{ alignItems: "center", backgroundColor: "#fcfafa" }}
+              >
+                <MDBInput
+                  style={{ height: "40px" }}
+                  placeholder="Discound code"
+                  wrapperClass="flex-fill"
+                />
+                <Button
+                  onClick={(e) => console.log("proceed to pay")}
+                  variant="outlined"
+                  style={{
+                    height: "40px",
+                    color: mouseHover ? "white" : "purple",
+                    borderColor: "purple",
+                    backgroundColor: mouseHover ? "purple" : "",
+                    margin: "10px",
+                  }}
+                  onMouseEnter={() => setMouseHover(true)}
+                  onMouseLeave={() => setMouseHover(false)}
+                >
+                  Apply
+                </Button>
+              </MDBCardBody>
+            </MDBCard>
+          </div>
+          <div style={{ textAlign: "right" }}>
+            <Button
+              onClick={(e) => console.log("proceed to pay")}
+              variant="contained"
+              style={{ backgroundColor: "purple" }}
+            >
+              PROCEED TO PAY
+            </Button>
           </div>
         </div>
       </Paper>

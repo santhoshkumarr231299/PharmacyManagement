@@ -24,7 +24,7 @@ export default function Navbar(props) {
 
         <div
           style={{
-            marginLeft: "1100px",
+            marginLeft: "1050px",
             display: "flex",
             gap: "1rem",
             alignItems: "center",

@@ -1,129 +1,97 @@
 import React from "react";
-import axios from "axios";
-import { useState } from "react";
-import { useEffect } from "react";
-import { DataGrid } from "@mui/x-data-grid";
-import { TextField, Button, Paper } from "@mui/material";
-import AccountCircle from "@mui/icons-material/AccountCircle";
-import InputAdornment from "@mui/material/InputAdornment";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import SearchIcon from "@mui/icons-material/Search";
-import Badge from "@mui/material/Badge";
-import { styled } from "@mui/material/styles";
-import IconButton from "@mui/material/IconButton";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import Tooltip from "@mui/material/Tooltip";
+import {
+  MDBBtn,
+  MDBCard,
+  MDBCardBody,
+  MDBCardImage,
+  MDBCol,
+  MDBContainer,
+  MDBIcon,
+  MDBRow,
+} from "mdb-react-ui-kit";
 
-export default function MedicinePage(props) {
-  const [medicines, setMedicines] = useState([]);
-  const updateMedicines = (e) => {
-    e.preventDefault();
-    axios
-      .post("http://localhost:3000/get-search-medicines", {
-        searchWord: e.target.value,
-      })
-      .then((resp) => {
-        setMedicines(resp.data);
-      });
-  };
-  useEffect(() => {
-    axios
-      .post("http://localhost:3000/get-search-medicines", {
-        searchWord: "",
-      })
-      .then((resp) => {
-        setMedicines(resp.data);
-      });
-  }, []);
-  console.log(medicines);
+export default function ReviewPage() {
   return (
-    <Paper
-      elevation={3}
-      style={{
-        alignSelf: "center",
-        margin: "auto",
-        backgroundColor: "white",
-        width: "1135px",
-        height: "600px",
-        color: "Black",
-      }}
-    >
-      <div
-        style={{
-          width: "1055px",
-          height: "560px",
-          marginTop: "20px",
-          margin: "auto",
-          alignSelf: "center",
-        }}
-      >
-        <div
-          style={{
-            width: "1095px",
-            height: "100px",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              gap: "4rem",
-              alignItems: "center",
-              margin: "auto",
-            }}
-          >
-            <OutlinedInput
-              style={{ width: "80%", margin: "10px 0px 20px 0px" }}
-              id="outlined-adornment-amount"
-              startAdornment={
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              }
-              placeholder="Search Medicines..."
-              onChange={(e) => updateMedicines(e)}
-            />
-            <Tooltip title="Cart" arrow>
-              <Badge badgeContent={4} color="primary">
-                <ShoppingCartIcon
-                  color="action"
-                  onClick={(e) => console.log("clicked")}
-                />
-              </Badge>
-            </Tooltip>
-          </div>
-        </div>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
-            gridGap: "5px",
-          }}
-        >
-          {medicines.map((data) => (
-            <Paper
-              elevation={3}
-              style={{
-                marginBottom: "10px",
-                backgroundColor: "white",
-                width: "150px",
-                height: "150px",
-                color: "Black",
-              }}
-            >
-              <h6
-                style={{
-                  marginLeft: "10px",
-                  textAlign: "left",
-                  paddingTop: "10px",
-                  marginBottom: "10px",
-                }}
-              >
-                {data.medname}
-              </h6>
-            </Paper>
-          ))}
-        </div>
-      </div>
-    </Paper>
+    <section className="vh-100" style={{ backgroundColor: "#fdccbc" }}>
+      <MDBContainer className="h-100">
+        <MDBRow className="justify-content-center align-items-center h-100">
+          <MDBCol>
+            <p>
+              <span className="h2">Shopping Cart </span>
+              <span className="h4">(1 item in your cart)</span>
+            </p>
+
+            <MDBCard className="mb-4">
+              <MDBCardBody className="p-4">
+                <MDBRow className="align-items-center">
+                  <MDBCol md="2">
+                    <MDBCardImage
+                      fluid
+                      src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/E-commerce/Products/1.webp"
+                      alt="Generic placeholder image"
+                    />
+                  </MDBCol>
+                  <MDBCol md="2" className="d-flex justify-content-center">
+                    <div>
+                      <p className="small text-muted mb-4 pb-2">Name</p>
+                      <p className="lead fw-normal mb-0">iPad Air</p>
+                    </div>
+                  </MDBCol>
+                  <MDBCol md="2" className="d-flex justify-content-center">
+                    <div>
+                      <p className="small text-muted mb-4 pb-2">Color</p>
+                      <p className="lead fw-normal mb-0">
+                        <MDBIcon
+                          fas
+                          icon="circle me-2"
+                          style={{ color: "#fdd8d2" }}
+                        />
+                        pink rose
+                      </p>
+                    </div>
+                  </MDBCol>
+                  <MDBCol md="2" className="d-flex justify-content-center">
+                    <div>
+                      <p className="small text-muted mb-4 pb-2">Quantity</p>
+                      <p className="lead fw-normal mb-0">1</p>
+                    </div>
+                  </MDBCol>
+                  <MDBCol md="2" className="d-flex justify-content-center">
+                    <div>
+                      <p className="small text-muted mb-4 pb-2">Price</p>
+                      <p className="lead fw-normal mb-0">$799</p>
+                    </div>
+                  </MDBCol>
+                  <MDBCol md="2" className="d-flex justify-content-center">
+                    <div>
+                      <p className="small text-muted mb-4 pb-2">Total</p>
+                      <p className="lead fw-normal mb-0">$799</p>
+                    </div>
+                  </MDBCol>
+                </MDBRow>
+              </MDBCardBody>
+            </MDBCard>
+
+            <MDBCard className="mb-5">
+              <MDBCardBody className="p-4">
+                <div className="float-end">
+                  <p className="mb-0 me-5 d-flex align-items-center">
+                    <span className="small text-muted me-2">Order total:</span>
+                    <span className="lead fw-normal">$799</span>
+                  </p>
+                </div>
+              </MDBCardBody>
+            </MDBCard>
+
+            <div className="d-flex justify-content-end">
+              <MDBBtn color="light" size="lg" className="me-2">
+                Continue shopping
+              </MDBBtn>
+              <MDBBtn size="lg">Add to cart</MDBBtn>
+            </div>
+          </MDBCol>
+        </MDBRow>
+      </MDBContainer>
+    </section>
   );
 }

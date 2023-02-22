@@ -42,25 +42,31 @@ function ForgotPassPage() {
     e.preventDefault();
     const userForgotPassDetails = {
       username: username.current.value,
-      newPassword: newPassword.current.value,
-      conNewPassword: conNewPassword.current.value,
+      newPass: newPassword.current.value,
+      conNewPass: conNewPassword.current.value,
     };
-    console.log(userForgotPassDetails);
-    // axios
-    //   .post("http://localhost:3000/new-user", userForgotPassDetails)
-    //   .then((resp) => {
-    //     if (resp.data) {
-    //       if (resp.data.message === "success") {
-    //         setAlertType("success");
-    //         setAlert(() => "New User Created Successfully");
-    //         setOpenAlert(true);
-    //       } else {
-    //         setAlertType("danger");
-    //         setAlert(() => "Failed to Create User");
-    //         setOpenAlert(true);
-    //       }
-    //     }
-    //   });
+
+    if (userForgotPassDetails.newPass !== userForgotPassDetails.conNewPass) {
+      setAlertType("danger");
+      setAlert(() => "Password Mismatch");
+      setOpenAlert(true);
+    }
+
+    axios
+      .post("http://localhost:3000/forgot-pass-change", userForgotPassDetails)
+      .then((resp) => {
+        if (resp.data) {
+          if (resp.data.status === "success") {
+            setAlertType("success");
+            setAlert(() => resp.data.message);
+            setOpenAlert(true);
+          } else {
+            setAlertType("danger");
+            setAlert(() => resp.data.message);
+            setOpenAlert(true);
+          }
+        }
+      });
   };
   const goToLoginPage = () => {
     navigate("/login");
@@ -86,7 +92,7 @@ function ForgotPassPage() {
             textAlign: "center",
           }}
         >
-          Sign Up
+          Forgot Password
         </Card.Title>
         <Card.Body>
           <Form
@@ -123,7 +129,7 @@ function ForgotPassPage() {
               type="submit"
               onClick={(e) => createUser(e)}
             >
-              Create Account
+              Change Password
             </Button>
             <div
               style={{

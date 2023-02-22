@@ -8,6 +8,7 @@ function NewUserPage() {
   const [alert, setAlert] = useState();
   const [openAlert, setOpenAlert] = useState(false);
   const [hoverColor, setHoverColor] = useState("black");
+  const [opacity, setOpacity] = useState("60%");
 
   const username = useRef();
   const password = useRef();
@@ -91,7 +92,31 @@ function NewUserPage() {
             textAlign: "center",
           }}
         >
-          Sign Up
+          <div
+            style={{
+              display: "flex",
+              gap: "2rem",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "80%",
+                opacity: opacity,
+              }}
+              onMouseEnter={() => {
+                setOpacity("100%");
+              }}
+              onMouseLeave={() => {
+                setOpacity("60%");
+              }}
+              onClick={() => goToLoginPage()}
+            >
+              Sign In
+            </div>
+            <div style={{ color: "purple" }}>New User</div>
+          </div>
         </Card.Title>
         <Card.Body>
           <Form
@@ -130,7 +155,7 @@ function NewUserPage() {
             >
               Create Account
             </Button>
-            <div
+            {/* <div
               style={{
                 margin: "10px",
                 textAlign: "center",
@@ -146,7 +171,7 @@ function NewUserPage() {
               >
                 Already a user?
               </a>
-            </div>
+            </div> */}
           </Form>
         </Card.Body>
       </Card>

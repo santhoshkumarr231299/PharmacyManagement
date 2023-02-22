@@ -282,6 +282,23 @@ app.post('/update-pass', (req,res) => {
 
 });
 
+app.post("/forgot-pass-change", (req,res) => {
+  connection.query('update users set password = ? where username = ?', [req.body.newPass, req.body.username], (err, result, fields) => {
+    if(err) {
+      res.status(200).send({
+        status : "error",
+        message : "Something went wrong"
+      })
+    }
+    else {
+      res.status(200).send({
+        status : "success",
+        message : "Password Changed"
+      })
+    }
+  })
+})
+
 app.post("/update-user-details", (req,res) => {
   if(!session || (session.user.username !== req.body.username)) {
     res.status(200).send({
