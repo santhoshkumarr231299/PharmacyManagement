@@ -115,7 +115,7 @@ function MainPage(props) {
   };
   return (
     <div>
-      <div>
+      <div className="sticky-pharm">
         <Navbar username={user ? user.username : " "} />
       </div>
       <div
@@ -124,8 +124,13 @@ function MainPage(props) {
           gap: "2rem",
         }}
       >
-        <div>
-          <ListGroup style={{ marginTop: "30px" }}>
+        <div className="sticky-pharm-sidebar">
+          <ListGroup
+            style={{
+              marginTop: "30px",
+              boxShadow: "0 2px 5px rgb(0 0 0 / 0.2)",
+            }}
+          >
             {menus.map((menu) => (
               <ListGroup.Item
                 style={{
@@ -154,8 +159,9 @@ function MainPage(props) {
         <div>
           <main
             style={{
-              marginTop: "30px",
-              padding: "20px 0 20px 20px",
+              marginTop: "10px",
+              marginLeft: "300px",
+              padding: "20px 0 25px 20px",
             }}
             class="content"
           >

@@ -99,7 +99,6 @@ function MedicinePage(props) {
         style={{
           width: "1055px",
           minHeight: "560px",
-          marginTop: "20px",
           margin: "auto",
           alignSelf: "center",
         }}
@@ -119,7 +118,11 @@ function MedicinePage(props) {
             }}
           >
             <OutlinedInput
-              style={{ width: "80%", margin: "10px 0px 20px 0px" }}
+              style={{
+                width: "80%",
+                margin: "25px 0px 20px 0px",
+                zIndex: "0",
+              }}
               id="outlined-adornment-amount"
               startAdornment={
                 <InputAdornment position="start">
@@ -160,6 +163,7 @@ function MedicinePage(props) {
           ))}
         </div>
       </div>
+      <div style={{ padding: "7px" }}></div>
     </Paper>
   );
 }

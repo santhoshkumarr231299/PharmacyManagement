@@ -85,7 +85,7 @@ function NewUserPage() {
   return (
     <div
       style={{
-        marginTop: "10%",
+        marginTop: "5%",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",

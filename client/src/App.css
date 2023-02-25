@@ -1,0 +1,17 @@
+body {
+    background-image: url('https://images.pexels.com/photos/7919/pexels-photo.jpg');
+    background-repeat: no-repeat;
+    background-size: 100% 150%;
+    background-attachment: fixed;
+}
+.sticky-pharm {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    box-shadow: 0 2px 5px rgb(0 0 0 / 0.2);
+}
+.sticky-pharm-sidebar {
+    position: fixed;
+    z-index: 2;
+}
