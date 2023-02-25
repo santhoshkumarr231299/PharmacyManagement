@@ -11,6 +11,7 @@ export default function Navbar(props) {
           gap: "2rem",
           position: "flex-end",
           alignItems: "center",
+          marginLeft: "15px",
         }}
       >
         <div
