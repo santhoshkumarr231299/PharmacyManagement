@@ -424,4 +424,55 @@ app.post('/delete-cart-items', (req,res) => {
   })
 })
 
+app.get('/get-invoices', (req, res) => {
+  if(!session) {
+    res.status(403).send({
+      status : "error",
+      message : "Authentication Failed"
+    })
+    return ;
+  }
+  connection.query('select * from invoices where username = ?', [session.user.username], (err, result, fields) => {
+    if(err) {
+      console.log(err);
+    }
+    let resp = [];
+    result.map((data) => {
+      resp.push({
+        username : session.user.username,
+        pharmName : data.pharm_name,
+        branch : data.branch,
+        quantity : data.quantity,
+        amount : data.amount,
+        invoiceDate : data.invoice_date,
+      });
+    })
+    res.status(200).send(resp);
+  })
+})
+
+app.post('/post-invoice', (req,res) => {
+  if(!session) {
+    res.status(403).send({
+      status : "error",
+      message : "Authentication Failed"
+    })
+    return ;
+  }
+  var queryParam = [session.user.username, req.body.pharmName, req.body.branch, req.body.quantity, req.body.amount];
+  connection.query('insert into invoices set username = ?, pharm_name = ?, branch = ?, quantity = ?, amount = ?, invoice_date = now()', queryParam, (err, result, fields) => {
+    if(err) {
+      res.status(200).send({
+        status : "error",
+        message : "Something went wrong"
+      })
+    }
+    else {
+      res.status(200).send({
+        status : "success",
+        message : "New Invoice inserted successfully"
+      })
+    }
+  })
+})
 module.exports = app;

@@ -33,21 +33,31 @@ function InvoiceReportPage(props) {
   useEffect(() => {
     let temp = [];
     let counter = 0;
-    // axios.get("http://localhost:3000/get-medicines").then((resp) => {
-    //   setMedicines(resp.data);
-    //   resp.data.forEach((da) => {
-    //     temp.push({ id: ++counter, mname: da.mname, mcompany: da.mcompany });
-    //   });
-    setDataGridRows(temp);
-    // });
+    axios.get("http://localhost:3000/get-invoices").then((resp) => {
+      setInvoice(resp.data);
+      resp.data.forEach((da) => {
+        temp.push({
+          id: ++counter,
+          username: da.username,
+          pharmname: da.pharmName,
+          branch: da.branch,
+          quantity: da.quantity,
+          amount: da.amount,
+          date: da.invoiceDate,
+        });
+      });
+      console.log("invoices  : ", temp);
+      setDataGridRows(temp);
+    });
   }, []);
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
-    { field: "name", headerName: "Name", width: 180 },
-    { field: "email", headerName: "Email", width: 130 },
-    { field: "mobilenumber", headerName: "Mobile Number", width: 130 },
-    { field: "address", headerName: "Address", width: 300 },
-    { field: "aadhar", headerName: "Aadhar", width: 130 },
+    { field: "username", headerName: "Username", width: 100 },
+    { field: "pharmname", headerName: "Pharm Name", width: 180 },
+    { field: "branch", headerName: "Branch", width: 130 },
+    { field: "quantity", headerName: "Quantity", width: 130 },
+    { field: "amount", headerName: "Amount", width: 130 },
+    { field: "date", headerName: "date", width: 160 },
   ];
   return (
     <Paper
@@ -97,27 +107,24 @@ function AddInvoicePage(props) {
   const [message, setMessage] = useState("");
 
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [mobileNumber, setMobileNumber] = useState("");
-  const [address, setAddress] = useState("");
-  const [aadhar, setAadhar] = useState("");
+  const [pharmName, setPharmName] = useState("");
+  const [branch, setBranch] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [amount, setAmount] = useState("");
 
   const updateValues = (e, fieldId) => {
     switch (fieldId) {
       case 1:
-        setName(e.target.value);
+        setPharmName(e.target.value);
         break;
       case 2:
-        setEmail(e.target.value);
+        setBranch(e.target.value);
         break;
       case 3:
-        setMobileNumber(e.target.value);
+        setQuantity(e.target.value);
         break;
       case 4:
-        setAddress(e.target.value);
-        break;
-      case 5:
-        setAadhar(e.target.value);
+        setAmount(e.target.value);
         break;
       default:
         console.log("Not Valid");
@@ -129,36 +136,29 @@ function AddInvoicePage(props) {
     {
       id: 1,
       type: "text",
-      fieldName: "name",
-      labelName: "Name",
+      fieldName: "pharmname",
+      labelName: "Parm Name",
       status: "active",
     },
     {
       id: 2,
-      type: "email",
-      fieldName: "email",
-      labelName: "Email",
+      type: "number",
+      fieldName: "branch",
+      labelName: "Branch",
       status: "active",
     },
     {
       id: 3,
       type: "number",
-      fieldName: "mobilenumber",
-      labelName: "Mobile Number",
+      fieldName: "quantity",
+      labelName: "Quantity",
       status: "active",
     },
     {
       id: 4,
-      type: "text",
-      fieldName: "address",
-      labelName: "Address",
-      status: "active",
-    },
-    {
-      id: 5,
       type: "number",
-      fieldName: "aadhar",
-      labelName: "Aadhar Number",
+      fieldName: "amount",
+      labelName: "Amount in Rs.",
       status: "active",
     },
   ];
@@ -169,27 +169,24 @@ function AddInvoicePage(props) {
   };
   const submitReport = (e) => {
     e.preventDefault();
-    // axios
-    //   .post("http://localhost:3000/post-medicine", {
-    //     medName: medName,
-    //     medCompany: medCompany,
-    //     medMrp: medMrp,
-    //     medRate: medRate,
-    //     medQuantity: medQuantity,
-    //     medExpiryDate: medExpiryDate,
-    //     medStatus: medStatus,
-    //   })
-    //   .then((resp) => {
-    //     setOpen(true);
-    //     setSeverity(resp.data.status);
-    //     setMessage(resp.data.message);
-    //   })
-    //   .catch((err) => {
-    //     setOpen(true);
-    //     setSeverity("error");
-    //     setMessage("Something went wrong");
-    //     return;
-    //   });
+    axios
+      .post("http://localhost:3000/post-invoice", {
+        pharmName: pharmName,
+        branch: branch,
+        quantity: quantity,
+        amount: amount,
+      })
+      .then((resp) => {
+        setOpen(true);
+        setSeverity(resp.data.status);
+        setMessage(resp.data.message);
+      })
+      .catch((err) => {
+        setOpen(true);
+        setSeverity("error");
+        setMessage("Something went wrong");
+        return;
+      });
   };
   const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
