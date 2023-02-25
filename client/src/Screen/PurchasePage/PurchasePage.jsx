@@ -11,7 +11,7 @@ import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import Tooltip from "@mui/material/Tooltip";
-import CartPage1 from "./CartPage";
+import Cards from "./Cards";
 import {
   MDBInput,
   MDBBtn,
@@ -55,6 +55,16 @@ function MedicinePage(props) {
         setMedicines(resp.data);
       });
   };
+  const updateCartCount = () => {
+    axios
+      .get("http://localhost:3000/get-cart-items-count")
+      .then((resp) => {
+        setCartItemSize(resp.data.cartSize);
+      })
+      .catch((err) => {
+        console.log("something went wrong");
+      });
+  };
   const changeOption = (e) => {
     e.preventDefault();
     props.changeOption(1);
@@ -70,14 +80,7 @@ function MedicinePage(props) {
       .catch((err) => {
         console.log("something went wrong");
       });
-    axios
-      .get("http://localhost:3000/get-cart-items-count")
-      .then((resp) => {
-        setCartItemSize(resp.data.cartSize);
-      })
-      .catch((err) => {
-        console.log("something went wrong");
-      });
+    updateCartCount();
   }, []);
   console.log(medicines);
   return (
@@ -144,42 +147,16 @@ function MedicinePage(props) {
           }}
         >
           {medicines.map((data) => (
-            <Paper
-              elevation={3}
-              style={{
-                marginBottom: "10px",
-                backgroundColor: "white",
-                width: "230px",
-                height: "300px",
-                color: "Black",
-              }}
-            >
-              <img
-                src="https://www.gocnetworking.com/wp-content/uploads/2020/07/AdobeStock_351037752-scaled.jpeg"
-                style={{
-                  margin: "10px",
-                  height: "150px",
-                  width: "210px",
-                }}
-              />
-              <table style={{ textAlign: "left", margin: "10px" }}>
-                <tr>
-                  <th>{data.mname}</th>
-                </tr>
-                <tr>
-                  <td>Original Price </td>
-                  <td>: {data.medMrp}</td>
-                </tr>
-                <tr>
-                  <td>Discount Price </td>
-                  <td>: {data.medRate}</td>
-                </tr>
-                <tr>
-                  <td>Company </td>
-                  <td>: {data.mcompany}</td>
-                </tr>
-              </table>
-            </Paper>
+            <Cards
+              name={data.mname}
+              content={data.mcompany}
+              mrp={data.medMrp}
+              rate={data.medRate}
+              updateCartCount={updateCartCount}
+              img={
+                "https://images.unsplash.com/photo-1617881770125-6fb0d039ecde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MzF8fG1lZGljaW5lfGVufDB8fDB8fA%3D%3D&w=1000&q=80"
+              }
+            />
           ))}
         </div>
       </div>
@@ -340,7 +317,7 @@ function CartPage(props) {
                         <MDBCardImage
                           style={{ marginLeft: "20px" }}
                           fluid
-                          src="https://www.gocnetworking.com/wp-content/uploads/2020/07/AdobeStock_351037752-scaled.jpeg"
+                          src="https://images.unsplash.com/photo-1617881770125-6fb0d039ecde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MzF8fG1lZGljaW5lfGVufDB8fDB8fA%3D%3D&w=1000&q=80"
                           alt="Generic placeholder image"
                         />
                       </MDBCol>
@@ -457,7 +434,7 @@ function CartPage(props) {
             <Button
               onClick={(e) => console.log("proceed to pay")}
               variant="contained"
-              style={{ backgroundColor: "purple" }}
+              style={{ backgroundColor: "purple", marginBottom: "15px" }}
             >
               PROCEED TO PAY
             </Button>

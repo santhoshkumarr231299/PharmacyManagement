@@ -14,6 +14,7 @@ function NewUserPage() {
   const password = useRef();
   const email = useRef();
   const phoneNumber = useRef();
+  const pharmacyName = useRef();
 
   const navigate = useNavigate();
 
@@ -46,12 +47,22 @@ function NewUserPage() {
       required: true,
       reference: email,
     },
+    {
+      fieldName: "pharmacyname",
+      type: "text",
+      labelName: "Pharmacy Name",
+      required: true,
+      reference: pharmacyName,
+    },
   ];
   const createUser = (e) => {
     e.preventDefault();
     const user = {
       username: username.current.value,
       password: password.current.value,
+      email: email.current.value,
+      mobileNumber: phoneNumber.current.value,
+      pharmacyName: pharmacyName.current.value,
     };
     console.log(user);
     axios.post("http://localhost:3000/new-user", user).then((resp) => {

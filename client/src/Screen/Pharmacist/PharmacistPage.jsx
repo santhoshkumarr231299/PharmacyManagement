@@ -33,13 +33,20 @@ function PharmacistPage(props) {
   useEffect(() => {
     let temp = [];
     let counter = 0;
-    // axios.get("http://localhost:3000/get-medicines").then((resp) => {
-    //   setMedicines(resp.data);
-    //   resp.data.forEach((da) => {
-    //     temp.push({ id: ++counter, mname: da.mname, mcompany: da.mcompany });
-    //   });
-    setDataGridRows(temp);
-    // });
+    axios.get("http://localhost:3000/get-pharmacists-details").then((resp) => {
+      setPharmacists(resp.data);
+      resp.data.forEach((data) => {
+        temp.push({
+          id: ++counter,
+          name: data.name,
+          email: data.email,
+          mobilenumber: data.mobileNumber,
+          address: data.address,
+          aadhar: data.aadhar,
+        });
+      });
+      setDataGridRows(temp);
+    });
   }, []);
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
@@ -169,27 +176,25 @@ function AddPharmacistPage(props) {
   };
   const submitReport = (e) => {
     e.preventDefault();
-    // axios
-    //   .post("http://localhost:3000/post-medicine", {
-    //     medName: medName,
-    //     medCompany: medCompany,
-    //     medMrp: medMrp,
-    //     medRate: medRate,
-    //     medQuantity: medQuantity,
-    //     medExpiryDate: medExpiryDate,
-    //     medStatus: medStatus,
-    //   })
-    //   .then((resp) => {
-    //     setOpen(true);
-    //     setSeverity(resp.data.status);
-    //     setMessage(resp.data.message);
-    //   })
-    //   .catch((err) => {
-    //     setOpen(true);
-    //     setSeverity("error");
-    //     setMessage("Something went wrong");
-    //     return;
-    //   });
+    axios
+      .post("http://localhost:3000/post-pharmacist-details", {
+        name: name,
+        email: email,
+        mobileNumber: mobileNumber,
+        address: address,
+        aadhar: aadhar,
+      })
+      .then((resp) => {
+        setOpen(true);
+        setSeverity(resp.data.status);
+        setMessage(resp.data.message);
+      })
+      .catch((err) => {
+        setOpen(true);
+        setSeverity("error");
+        setMessage("Something went wrong");
+        return;
+      });
   };
   const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;

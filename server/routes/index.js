@@ -82,7 +82,7 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/new-user', (req, res) => {
-  connection.query('INSERT INTO USERS (USERNAME, PASSWORD, ROLE, LAST_ACCESSED) VALUES (?,?,?,?)', [req.body.username, req.body.password, 1, 1], (err, result, fields) => {
+  connection.query('INSERT INTO USERS (USERNAME, PASSWORD, ROLE, LAST_ACCESSED,EMAIL,MOBILE_NUMBER, PHARMACY_NAME,BRANCH_ID) VALUES (?,?,?,?,?,?,?,?)', [req.body.username, req.body.password, 1, 1,req.body.email, req.body.mobileNumber, req.body.pharmacyName,1], (err, result, fields) => {
     res.status(200).send({
       message: 'success'
     });
@@ -90,7 +90,7 @@ app.post('/new-user', (req, res) => {
 })
 
 app.get('/get-medicines',(req,res) => {
-  connection.query('SELECT * FROM MEDICINES',(err,result,fields) => {
+  connection.query('SELECT * FROM MEDICINES where username = ?',[session.user.username],(err,result,fields) => {
     let data = [];
     result.map((mdata) => {
       data.push({
@@ -119,12 +119,12 @@ app.post('/post-medicine', (req,res) => {
     return ;
   }
   var sizeOfMed = 0;
-  connection.query('select count(mid) as total from medicines',(err, result, fields) => {
+  connection.query('select count(mid) as total from medicines where username = ?',[session.user.username],(err, result, fields) => {
     sizeOfMed = result[0].total;
     
-    var queryParam = [sizeOfMed + 1, req.body.medName, req.body.medCompany, req.body.medQuantity, req.body.medExpiryDate,req.body.medMrp, req.body.medRate, (req.body.medStatus === 'ACTIVE' ? '1' : '0'), session.user.username];
+    var queryParam = [session.user.username,sizeOfMed + 1, req.body.medName, req.body.medCompany, req.body.medQuantity, req.body.medExpiryDate,req.body.medMrp, req.body.medRate, (req.body.medStatus === 'ACTIVE' ? '1' : '0'), session.user.username];
   
-    connection.query("insert into medicines (mid, mname, mcompany, quantity, expiry_date, med_mrp, med_rate, status, added_by) values (?,?,?,?,?,?,?,?,?)", queryParam,(err, result, fields) => {
+    connection.query("insert into medicines (username, mid, mname, mcompany, quantity, expiry_date, med_mrp, med_rate, status, added_by) values (?,?,?,?,?,?,?,?,?,?)", queryParam,(err, result, fields) => {
       console.log
       if(err) {
         res.status(200).send({
@@ -460,6 +460,13 @@ app.post('/post-invoice', (req,res) => {
     return ;
   }
   var queryParam = [session.user.username, req.body.pharmName, req.body.branch, req.body.quantity, req.body.amount];
+   if(!session) {
+    res.status(200).send({
+      status : "error",
+      message : "Authentication Failed"
+    })
+    return ;
+  }
   connection.query('insert into invoices set username = ?, pharm_name = ?, branch = ?, quantity = ?, amount = ?, invoice_date = now()', queryParam, (err, result, fields) => {
     if(err) {
       res.status(200).send({
@@ -475,4 +482,159 @@ app.post('/post-invoice', (req,res) => {
     }
   })
 })
+
+app.get('/get-delivery-men-details', (req,res) => {
+  var query = 'select * from delivery_men';
+  connection.query(query, (err, result, fields) => {
+    if(err) {
+      res.status(200).send({
+        status : "error",
+        message : "Something went wrong"
+      })
+    }
+    else {
+      let respData = [];
+      result.map((data)=> {
+        respData.push({
+          name : data.username,
+          email : data.email,
+          mobileNumber : data.mobile_number,
+          address : data.address,
+          aadhar : data.aadhar_number,
+        })
+      })
+      res.status(200).send(respData);
+    }
+  })
+})
+
+app.post('/post-delivery-man-details', (req,res) => {
+  if(!session) {
+    res.status(200).send({
+      status : "error",
+      message : "Authentication Failed"
+    })
+    return ;
+  }
+  var queryParam = [req.body.name, req.body.email, req.body.mobileNumber, req.body.address, req.body.aadhar];
+  connection.query('insert into delivery_men set username = ?, email = ?, mobile_number = ?, address = ?, aadhar_number = ?', queryParam, (err, result, fields) => {
+    if(err) {
+      res.status(200).send({
+        status : "error",
+        message : "Something went wrong"
+      })
+    }
+    else {
+      res.status(200).send({
+        status : "success",
+        message : "New Delivery Man details inserted successfully"
+      })
+    }
+  })
+})
+
+app.get('/get-pharmacists-details', (req,res) => {
+  var query = 'select * from pharmacists';
+  connection.query(query, (err, result, fields) => {
+    if(err) {
+      res.status(200).send({
+        status : "error",
+        message : "Something went wrong"
+      })
+    }
+    else {
+      let respData = [];
+      result.map((data)=> {
+        respData.push({
+          name : data.username,
+          email : data.email,
+          mobileNumber : data.mobile_number,
+          address : data.address,
+          aadhar : data.aadhar_number,
+        })
+      })
+      res.status(200).send(respData);
+    }
+  })
+})
+
+app.post('/post-pharmacist-details', (req,res) => {
+  if(!session) {
+    res.status(200).send({
+      status : "error",
+      message : "Authentication Failed"
+    })
+    return ;
+  }
+  var queryParam = [req.body.name, req.body.email, req.body.mobileNumber, req.body.address, req.body.aadhar];
+  connection.query('insert into pharmacists set username = ?, email = ?, mobile_number = ?, address = ?, aadhar_number = ?', queryParam, (err, result, fields) => {
+    if(err) {
+      res.status(200).send({
+        status : "error",
+        message : "Something went wrong"
+      })
+    }
+    else {
+      res.status(200).send({
+        status : "success",
+        message : "New Pharmacist details inserted successfully"
+      })
+    }
+  })
+})
+
+
+app.post('/add-to-cart', (req,res) => {
+  if(!session) {
+    res.status(200).send({
+      status : "error",
+      message : "Authentication Failed"
+    })
+    return ;
+  }
+  let query = 'select count(*) as total from cartitems where username = ? and medname = ?';
+  let queryParam = [session.user.username, req.body.medName];
+
+  connection.query(query, queryParam, (err, result, fields) => {
+    if(err) {
+      res.status(200).send({
+        status : "error",
+        message : "Something went wrong"
+      })
+    }
+    else if(result[0].total > 0) {
+      res.status(200).send({
+        status : "warning",
+        message : `${req.body.medName} is already in cart...`,
+      })
+    }
+      else {
+        let id = 1;
+          connection.query('select count(*) as total from cartitems where username = ? ', [session.user.username], (err1, result1, fields1) => {
+            if (err1) {
+              res.status(200).send({
+                status: "error",
+                message: "Something went wrong"
+              });
+            }
+            id = result1[0].total + 1;
+            connection.query('insert into cartitems (mid, username, medname, quantity, price) values (?,?, ?, ?, (select m.med_rate from medicines m where m.mname = ?))', [id.toString(), session.user.username, req.body.medName,req.body.quantity, req.body.medName], (err2, result2, fields2) => {
+              if(err2) {
+                res.status(200).send({
+                  status : "error",
+                  message : "Something went wrong"
+                })
+              }
+              else {
+              res.status(200).send({
+                status : "success",
+                message : `${req.body.medName} is added to Cart`
+              })
+            }
+            })
+          }); 
+      }
+    })
+  })
+
 module.exports = app;

@@ -64,6 +64,7 @@ function UserDetails(props) {
   const [open, setOpen] = useState(false);
   const [severity, setSeverity] = useState("");
   const [message, setMessage] = useState("");
+
   const [user, setUser] = useState({});
   const userFields = [
     {
@@ -99,7 +100,7 @@ function UserDetails(props) {
       fieldName: "branch-id",
       labelName: "Branch ID",
       value: user.branchId,
-      status: "active",
+      status: "disabled",
     },
   ];
   const handleClose = () => {
@@ -130,15 +131,16 @@ function UserDetails(props) {
   const updateValues = (e, id) => {
     userFields[id - 1].value = e.target.value;
   };
-  const fetchData = () => {
-    axios
+  const fetchData = async () => {
+    let tempUser;
+    await axios
       .post("http://localhost:3000/get-user-details", {
         username: props.username,
       })
       .then((resp) => {
-        let tempUser = resp.data;
-        setUser(tempUser);
+        tempUser = resp.data;
       });
+    setUser(tempUser);
   };
   useEffect(() => {
     fetchData();
@@ -150,12 +152,12 @@ function UserDetails(props) {
     <div>
       {userFields.map((userField) => (
         <div>
-          <TextField
+          <input
             key={userField.id}
             style={{ margin: "10px" }}
             label={userField.labelName}
             disabled={userField.status === "disabled"}
-            defaultValue={userField.value ? userField.value : ""}
+            defaultValue={userField.value}
             variant="outlined"
             onChange={(e) => updateValues(e, userField.id)}
             InputLabelProps={{
