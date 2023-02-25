@@ -133,6 +133,7 @@ function MainPage(props) {
           >
             {menus.map((menu) => (
               <ListGroup.Item
+                className="sidebar-items"
                 style={{
                   width: "250px",
                   color: option === menu.menuValue ? "purple" : "",

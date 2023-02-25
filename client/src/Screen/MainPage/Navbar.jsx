@@ -15,12 +15,13 @@ export default function Navbar(props) {
         }}
       >
         <div
+          className="main-title"
           style={{
             display: "flex",
             gap: "2rem",
           }}
         >
-          <h5>Pharmacy Management</h5>
+          <h5>PharmSimple</h5>
         </div>
 
         <div
