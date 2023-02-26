@@ -44,6 +44,7 @@ function MainPage(props) {
           username: res.data.username,
           role: res.data.role,
           lastAccessedScreen: res.data.lastAccessedScreen,
+          haveAccessTo: res.data.haveAccessTo,
         });
         console.log(res.data.lastAccessedScreen);
         setOption(res.data.lastAccessedScreen);
@@ -72,17 +73,62 @@ function MainPage(props) {
       });
   };
   const menus = [
-    { name: "Dashboard", menuValue: 1, icon: <Dashboard /> },
-    { name: "Invoice", menuValue: 2, icon: <Receipt /> },
-    { name: "Customer", menuValue: 3, icon: <People /> },
-    { name: "Medicine", menuValue: 4, icon: <Vaccines /> },
-    { name: "Pharmacist", menuValue: 5, icon: <LocalPharmacy /> },
-    { name: "Delivery Men", menuValue: 6, icon: <DeliveryDining /> },
-    { name: "Sales Report", menuValue: 7, icon: <AttachMoney /> },
-    { name: "Purchase", menuValue: 8, icon: <ShoppingBasket /> },
-    { name: "Reports", menuValue: 9, icon: <Flag /> },
-    { name: "Settings", menuValue: 10, icon: <Settings /> },
-    { name: "Logout", menuValue: 11, icon: <Logout /> },
+    {
+      name: "Dashboard",
+      menuValue: 1,
+      icon: <Dashboard />,
+      haveAccess: user && user.haveAccessTo.includes("[1]"),
+    },
+    {
+      name: "Invoice",
+      menuValue: 2,
+      icon: <Receipt />,
+      haveAccess: user && user.haveAccessTo.includes("[2]"),
+    },
+    {
+      name: "Customer",
+      menuValue: 3,
+      icon: <People />,
+      haveAccess: user && user.haveAccessTo.includes("[3]"),
+    },
+    {
+      name: "Medicine",
+      menuValue: 4,
+      icon: <Vaccines />,
+      haveAccess: user && user.haveAccessTo.includes("[4]"),
+    },
+    {
+      name: "Pharmacist",
+      menuValue: 5,
+      icon: <LocalPharmacy />,
+      haveAccess: user && user.haveAccessTo.includes("[5]"),
+    },
+    {
+      name: "Delivery Men",
+      menuValue: 6,
+      icon: <DeliveryDining />,
+      haveAccess: user && user.haveAccessTo.includes("[6]"),
+    },
+    {
+      name: "Sales Report",
+      menuValue: 7,
+      icon: <AttachMoney />,
+      haveAccess: user && user.haveAccessTo.includes("[7]"),
+    },
+    {
+      name: "Purchase",
+      menuValue: 8,
+      icon: <ShoppingBasket />,
+      haveAccess: user && user.haveAccessTo.includes("[8]"),
+    },
+    {
+      name: "Reports",
+      menuValue: 9,
+      icon: <Flag />,
+      haveAccess: user && user.haveAccessTo.includes("[9]"),
+    },
+    { name: "Settings", menuValue: 10, icon: <Settings />, haveAccess: true },
+    { name: "Logout", menuValue: 11, icon: <Logout />, haveAccess: true },
   ];
 
   const contentArea = () => {
@@ -131,30 +177,33 @@ function MainPage(props) {
               boxShadow: "0 2px 5px rgb(0 0 0 / 0.2)",
             }}
           >
-            {menus.map((menu) => (
-              <ListGroup.Item
-                className="sidebar-items"
-                style={{
-                  width: "250px",
-                  color: option === menu.menuValue ? "purple" : "",
-                  fontWeight: option === menu.menuValue ? "bold" : "",
-                }}
-              >
-                <a
-                  style={{
-                    display: "flex",
-                    gap: "10px",
-                    margin: "8px 0 8px 0",
-                  }}
-                  onClick={(e) => changeOption(e, menu.menuValue)}
-                >
-                  <div>{menu.icon}</div>
-                  <div>
-                    <span>{menu.name}</span>
-                  </div>
-                </a>
-              </ListGroup.Item>
-            ))}
+            {menus.map(
+              (menu) =>
+                menu.haveAccess && (
+                  <ListGroup.Item
+                    className="sidebar-items"
+                    style={{
+                      width: "250px",
+                      color: option === menu.menuValue ? "purple" : "",
+                      fontWeight: option === menu.menuValue ? "bold" : "",
+                    }}
+                  >
+                    <a
+                      style={{
+                        display: "flex",
+                        gap: "10px",
+                        margin: "8px 0 8px 0",
+                      }}
+                      onClick={(e) => changeOption(e, menu.menuValue)}
+                    >
+                      <div>{menu.icon}</div>
+                      <div>
+                        <span>{menu.name}</span>
+                      </div>
+                    </a>
+                  </ListGroup.Item>
+                )
+            )}
           </ListGroup>
         </div>
         <div>

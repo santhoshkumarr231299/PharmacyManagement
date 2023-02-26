@@ -37,11 +37,12 @@ app.get('/logged-in', (req, res) => {
       })
     }
     else {
-      connection.query("SELECT * FROM USERS WHERE USERNAME = ?", [session.user.username], (err, result, fields) => {
+      connection.query("SELECT * FROM USERS WHERE USERNAME = ? AND PHARMACY_NAME = ?", [session.user.username, session.user.pharmacy], (err, result, fields) => {
         res.status(200).send({
           username: session.user.username,
           role: session.user.role,
           lastAccessedScreen: result[0].last_accessed,
+          haveAccessTo : result[0].have_access_to,
         })
       });
     }
@@ -56,13 +57,14 @@ app.get('/logged-in', (req, res) => {
 })
 
 app.post('/login', (req, res) => {
-  connection.query('SELECT * FROM USERS WHERE USERNAME = ? AND PASSWORD = ?', [req.body.username, req.body.password], (err, result, fields) => {
+  connection.query('SELECT * FROM USERS WHERE USERNAME = ? AND PASSWORD = ? AND PHARMACY_NAME = ?', [req.body.username, req.body.password, req.body.pharmacy ], (err, result, fields) => {
     if (result.length == 1) {
       session = req.session;
       var validatedUser = {
         username: result[0].username,
         role: result[0].role,
         lastAccessedScreen: result[0].last_accessed,
+        pharmacy : result[0].pharmacy_name,
         message: 'success'
       };
       session.user = validatedUser;
@@ -82,10 +84,34 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/new-user', (req, res) => {
-  connection.query('INSERT INTO USERS (USERNAME, PASSWORD, ROLE, LAST_ACCESSED,EMAIL,MOBILE_NUMBER, PHARMACY_NAME,BRANCH_ID) VALUES (?,?,?,?,?,?,?,?)', [req.body.username, req.body.password, 1, 1,req.body.email, req.body.mobileNumber, req.body.pharmacyName,1], (err, result, fields) => {
-    res.status(200).send({
-      message: 'success'
-    });
+  connection.query('select * from users where username = ?', [req.body.username], (err, result, fields) => {
+    if(err) {
+      res.status(200).send({
+        status : "danger",
+        message : "Something went wrong"
+      })
+    }
+    else if(result.length > 0) {
+      res.status(200).send({
+        status : "danger",
+        message : "Username already exists"
+      })
+
+    } else {
+    connection.query('INSERT INTO USERS (USERNAME, PASSWORD, ROLE, LAST_ACCESSED,EMAIL,MOBILE_NUMBER, PHARMACY_NAME,BRANCH_ID,have_access_to) VALUES (?,?,?,?,?,?,?,?,?)', [req.body.username, req.body.password, req.body.pharmacyName && req.body.pharmacyName.trim() !== '' ? 1 : 2, req.body.pharmacyName && req.body.pharmacyName.trim() !== '' ? 1 : 8,req.body.email, req.body.mobileNumber, req.body.pharmacyName,req.body.pharmacyName && req.body.pharmacyName.trim() !== '' ? 1 : '',req.body.pharmacyName && req.body.pharmacyName.trim() !== '' ? '[1],[2],[3],[4],[5],[6],[7],[8],[9]' : '[8]'], (err1, result1, fields1) => {
+      if(err1) {
+        res.status(200).send({
+          status : "danger",
+          message : "Something went wrong"
+        })
+      } else{
+      res.status(200).send({
+        status: 'success',
+        message : "New User Created"
+      });
+    }
+    })
+  }
   })
 })
 
@@ -157,7 +183,13 @@ app.get('/', function (req, res, next) {
 });
 
 app.post('/update-last-accessed', (req, res) => {
-  connection.query('UPDATE USERS SET LAST_ACCESSED = ? WHERE USERNAME = ?', [req.body.lastAccessedScreen, req.body.username], (err, result, fields) => {
+  if(!session) {
+    res.status(403).send({
+      status : "failed",
+      message : "authentication failed"
+    })
+  }
+  connection.query('UPDATE USERS SET LAST_ACCESSED = ? WHERE USERNAME = ? AND PHARMACY_NAME = ?', [req.body.lastAccessedScreen, session.user.username, session.user.pharmacy], (err, result, fields) => {
     res.send({message:"success"})
   });
 })
@@ -214,7 +246,7 @@ app.get('/get-cart-items', (req,res) => {
     })
     return ;
   }
-  connection.query('select medname, quantity, price, mid from cartitems where username = ?', [session.user.username],(err, result, fields) => {
+  connection.query('select medname, quantity, price, mid from cartitems where username = ? and pharmacy_name = ?', [session.user.username, session.user.pharmacy],(err, result, fields) => {
     let data = [];
     let count = 1;
     result.map((item) => {
@@ -238,7 +270,7 @@ app.post('/update-pass', (req,res) => {
     })
     return ;
   }
-  connection.query('select username from users where username = ? and password = ?', [session.user.username, req.body.oldPass],(err, result, fields) => {
+  connection.query('select username from users where username = ? and password = ? and pharmacy_name = ?', [session.user.username, req.body.oldPass, session.user.pharmacy],(err, result, fields) => {
     if(err) {
       res.status(200).send({
         status : "error",
@@ -261,7 +293,7 @@ app.post('/update-pass', (req,res) => {
         })
       }
       else {
-      connection.query('update users set password = ? where username = ?', [req.body.newPass, session.user.username],(err, result, fields) => {
+      connection.query('update users set password = ? where username = ? and pharmacy_name = ?', [req.body.newPass, session.user.username, session.user.pharmacy],(err, result, fields) => {
         if(err) {
           res.status(200).send({
             status : "error",
@@ -390,7 +422,7 @@ app.get('/get-cart-items-count', (req,res) => {
     })
     return ;
   }
-  connection.query('select count(username) as total from cartitems where username = ?', [session.user.username], (err, result, fields) => {
+  connection.query('select count(username) as total from cartitems where username = ? and pharmacy_name = ?', [session.user.username,session.user.pharmacy], (err, result, fields) => {
     res.status(200).send({
       cartSize : result[0].total,
       message : 'success'
@@ -534,8 +566,8 @@ app.post('/post-delivery-man-details', (req,res) => {
 })
 
 app.get('/get-pharmacists-details', (req,res) => {
-  var query = 'select * from pharmacists';
-  connection.query(query, (err, result, fields) => {
+  var query = 'select * from pharmacists where added_by = ?';
+  connection.query(query,[session.user.username], (err, result, fields) => {
     if(err) {
       res.status(200).send({
         status : "error",
@@ -566,8 +598,22 @@ app.post('/post-pharmacist-details', (req,res) => {
     })
     return ;
   }
-  var queryParam = [req.body.name, req.body.email, req.body.mobileNumber, req.body.address, req.body.aadhar];
-  connection.query('insert into pharmacists set username = ?, email = ?, mobile_number = ?, address = ?, aadhar_number = ?', queryParam, (err, result, fields) => {
+  connection.query('select count(*) as total from users where username = ?', [req.body.name], (err3, result3, fields3) => {
+    if(err3)
+    {
+      res.status(200).send({
+        status : "error",
+        message : "Something went wrong"
+      })
+    } 
+    else if(result3[0].total > 0) {
+      res.status(200).send({
+        status : "warning",
+        message : "Username already exists"
+      })
+    }else {
+      var queryParam = [req.body.name, req.body.email, req.body.mobileNumber, req.body.address, req.body.aadhar, session.user.username];
+  connection.query('insert into pharmacists set username = ?, email = ?, mobile_number = ?, address = ?, aadhar_number = ?, added_by = ?', queryParam, (err, result, fields) => {
     if(err) {
       res.status(200).send({
         status : "error",
@@ -575,10 +621,23 @@ app.post('/post-pharmacist-details', (req,res) => {
       })
     }
     else {
+      var queryParam1 = [req.body.name, 'pharmacist', 3, 5, req.body.email,session.user.username,session.user.username, req.body.mobileNumber,'[5]'];
+     connection.query('insert into users (username, password, role,last_accessed, email,pharmacy_name,branch_id, mobile_number, have_access_to) values (?,?,?,?,?,(select u.pharmacy_name from users u where username = ?),(select u.branch_id from users u where username = ?),?,?)',queryParam1,(err1, result1, fields1) => {
+      if(err1) {
+        res.status(200).send({
+          status : "error",
+          message : "Something went wrong"
+        })
+      }
+      else {
       res.status(200).send({
         status : "success",
         message : "New Pharmacist details inserted successfully"
       })
+    }
+     })
+    }
+  })
     }
   })
 })
@@ -592,8 +651,8 @@ app.post('/add-to-cart', (req,res) => {
     })
     return ;
   }
-  let query = 'select count(*) as total from cartitems where username = ? and medname = ?';
-  let queryParam = [session.user.username, req.body.medName];
+  let query = 'select count(*) as total from cartitems where username = ? and medname = ? and pharmacy_name = ?';
+  let queryParam = [session.user.username, req.body.medName, session.user.pharmacy];
 
   connection.query(query, queryParam, (err, result, fields) => {
     if(err) {
@@ -610,7 +669,7 @@ app.post('/add-to-cart', (req,res) => {
     }
       else {
         let id = 1;
-          connection.query('select count(*) as total from cartitems where username = ? ', [session.user.username], (err1, result1, fields1) => {
+          connection.query('select count(*) as total from cartitems where username = ? and pharmacy_name = ?', [session.user.username,session.user.pharmacy], (err1, result1, fields1) => {
             if (err1) {
               res.status(200).send({
                 status: "error",
@@ -618,7 +677,7 @@ app.post('/add-to-cart', (req,res) => {
               });
             }
             id = result1[0].total + 1;
-            connection.query('insert into cartitems (mid, username, medname, quantity, price) values (?,?, ?, ?, (select m.med_rate from medicines m where m.mname = ?))', [id.toString(), session.user.username, req.body.medName,req.body.quantity, req.body.medName], (err2, result2, fields2) => {
+            connection.query('insert into cartitems (mid, username, medname, quantity, price,pharmacy_name) values (?,?, ?, ?, (select m.med_rate from medicines m where m.mname = ?), ?)', [id.toString(), session.user.username, req.body.medName,req.body.quantity, req.body.medName, session.user.pharmacy], (err2, result2, fields2) => {
               if(err2) {
                 res.status(200).send({
                   status : "error",
@@ -636,5 +695,18 @@ app.post('/add-to-cart', (req,res) => {
       }
     })
   })
+
+app.get('/get-created-pharmacies', (req, res) => {
+  connection.query('select distinct pharmacy_name from users order by pharmacy_name asc', (err, result, fields) => {
+    let list = [];
+    result.map((data) => {
+      list.push(data.pharmacy_name);
+    })
+    res.status(200).send({
+      status : "success",
+      pharmacies : list,
+    })
+  })
+})
 
 module.exports = app;

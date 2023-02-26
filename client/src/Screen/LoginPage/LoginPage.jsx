@@ -4,14 +4,17 @@ import axios from "axios";
 import { Button, Form, Card, Alert } from "react-bootstrap";
 
 function LoginPage() {
+  const [pharmacies, setPharmacies] = useState([]);
   const [alertType, setAlertType] = useState();
   const [alert, setAlert] = useState();
   const [openAlert, setOpenAlert] = useState(false);
   const [hoverColor, setHoverColor] = useState("black");
   const [opacity, setOpacity] = useState("60%");
+  const [selectDisp, setSelectDisp] = useState(false);
 
   const username = useRef();
   const password = useRef();
+  const pharmaciesRef = useRef();
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -26,11 +29,13 @@ function LoginPage() {
     console.log({
       username: username.current.value,
       password: password.current.value,
+      pharmacy: setSelectDisp,
     });
     axios
       .post("http://localhost:3000/login", {
         username: username.current.value,
         password: password.current.value,
+        pharmacy: selectDisp ? pharmaciesRef.current.value : "",
       })
       .then((res) => {
         if (res.data.message === "success") {
@@ -41,6 +46,10 @@ function LoginPage() {
           setOpenAlert(() => true);
         }
       });
+  };
+
+  const handleChecked = (e) => {
+    setSelectDisp(e.target.checked);
   };
 
   const fields = [
@@ -58,7 +67,20 @@ function LoginPage() {
       required: true,
       reference: password,
     },
+    {
+      fieldName: "pharmacies",
+      labelName: "Pharmacies",
+      type: "select",
+      select: pharmacies,
+      reference: pharmaciesRef,
+    },
   ];
+
+  useEffect(() => {
+    axios.get("http://localhost:3000/get-created-pharmacies").then((resp) => {
+      setPharmacies(resp.data.pharmacies);
+    });
+  }, []);
 
   return (
     <div
@@ -115,15 +137,35 @@ function LoginPage() {
             }}
           >
             {fields.map((field) => (
-              <Form.Group className="mb-3" controlId={field.fieldName}>
-                <Form.Label>{field.labelName}</Form.Label>
-                <Form.Control
-                  type={field.type}
-                  ref={field.reference}
-                  placeholder={field.labelName}
-                />
-                <Form.Text className="text-muted"></Form.Text>
-              </Form.Group>
+              <div>
+                {field.type !== "select" && (
+                  <Form.Group className="mb-3" controlId={field.fieldName}>
+                    <Form.Label>{field.labelName}</Form.Label>
+                    <Form.Control
+                      type={field.type}
+                      ref={field.reference}
+                      placeholder={field.labelName}
+                    />
+                    <Form.Text className="text-muted"></Form.Text>
+                  </Form.Group>
+                )}
+
+                {field.type === "select" && (
+                  <Form.Select
+                    style={{
+                      marginBottom: "20px",
+                      display: selectDisp ? "inline" : "none",
+                    }}
+                    aria-label="Default select example"
+                    ref={field.reference}
+                  >
+                    {field.select.map(
+                      (data) =>
+                        data !== "" && <option value={data}>{data}</option>
+                    )}
+                  </Form.Select>
+                )}
+              </div>
             ))}
             <Alert
               variant={alertType}
@@ -144,6 +186,12 @@ function LoginPage() {
             >
               Log In
             </Button>
+            <div style={{ margin: "10px", display: "flex", gap: "10px" }}>
+              <div>
+                <Form.Check onChange={(e) => handleChecked(e)} />
+              </div>
+              <div style={{ opacity: "60%" }}>Organization Login</div>
+            </div>
             <div
               style={{
                 margin: "10px",

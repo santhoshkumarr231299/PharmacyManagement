@@ -9,6 +9,7 @@ function NewUserPage() {
   const [openAlert, setOpenAlert] = useState(false);
   const [hoverColor, setHoverColor] = useState("black");
   const [opacity, setOpacity] = useState("60%");
+  const [dispProp, setDispProp] = useState(false);
 
   const username = useRef();
   const password = useRef();
@@ -51,10 +52,15 @@ function NewUserPage() {
       fieldName: "pharmacyname",
       type: "text",
       labelName: "Pharmacy Name",
-      required: true,
+      required: dispProp ? "" : "none",
       reference: pharmacyName,
     },
   ];
+
+  const handleChecked = (e) => {
+    setDispProp(e.target.checked);
+  };
+
   const createUser = (e) => {
     e.preventDefault();
     const user = {
@@ -62,20 +68,14 @@ function NewUserPage() {
       password: password.current.value,
       email: email.current.value,
       mobileNumber: phoneNumber.current.value,
-      pharmacyName: pharmacyName.current.value,
+      pharmacyName: dispProp ? pharmacyName.current.value : "",
     };
     console.log(user);
     axios.post("http://localhost:3000/new-user", user).then((resp) => {
       if (resp.data) {
-        if (resp.data.message === "success") {
-          setAlertType("success");
-          setAlert(() => "New User Created Successfully");
-          setOpenAlert(true);
-        } else {
-          setAlertType("danger");
-          setAlert(() => "Failed to Create User");
-          setOpenAlert(true);
-        }
+        setAlertType(resp.data.status);
+        setAlert(() => resp.data.message);
+        setOpenAlert(true);
       }
     });
   };
@@ -137,7 +137,11 @@ function NewUserPage() {
             }}
           >
             {fields.map((field) => (
-              <Form.Group className="mb-3" controlId={field.fieldName}>
+              <Form.Group
+                style={{ display: field.required }}
+                className="mb-3"
+                controlId={field.fieldName}
+              >
                 <Form.Label>{field.labelName}</Form.Label>
                 <Form.Control
                   type={field.type}
@@ -166,6 +170,12 @@ function NewUserPage() {
             >
               Create Account
             </Button>
+            <div style={{ margin: "10px", display: "flex", gap: "10px" }}>
+              <div>
+                <Form.Check onChange={(e) => handleChecked(e)} />
+              </div>
+              <div>Organizational account</div>
+            </div>
             {/* <div
               style={{
                 margin: "10px",
