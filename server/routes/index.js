@@ -116,7 +116,7 @@ app.post('/new-user', (req, res) => {
 })
 
 app.get('/get-medicines',(req,res) => {
-  connection.query('SELECT * FROM MEDICINES where username = ?',[session.user.username],(err,result,fields) => {
+  connection.query('SELECT * FROM MEDICINES where added_by in (select u.username from users u where u.pharmacy_name = (select distinct us.pharmacy_name from users us where username = ?))',[session.user.username],(err,result,fields) => {
     let data = [];
     result.map((mdata) => {
       data.push({
