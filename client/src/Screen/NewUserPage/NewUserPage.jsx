@@ -174,7 +174,7 @@ function NewUserPage() {
               <div>
                 <Form.Check onChange={(e) => handleChecked(e)} />
               </div>
-              <div>Organizational account</div>
+              <div className="org-login">Organizational account</div>
             </div>
             {/* <div
               style={{

@@ -198,7 +198,7 @@ function AddReportPage(props) {
               <div>
                 <TextField
                   key={report.id}
-                  style={{ margin: "10px" }}
+                  style={{ margin: "10px", width: "400px" }}
                   label={report.labelName}
                   disabled={report.status === "disabled"}
                   variant="outlined"
@@ -206,6 +206,7 @@ function AddReportPage(props) {
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  multiline={true}
                   required
                 />
                 <br />

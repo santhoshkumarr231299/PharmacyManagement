@@ -152,12 +152,12 @@ function UserDetails(props) {
     <div>
       {userFields.map((userField) => (
         <div>
-          <input
+          <TextField
             key={userField.id}
             style={{ margin: "10px" }}
             label={userField.labelName}
             disabled={userField.status === "disabled"}
-            defaultValue={userField.value}
+            value={userField.value}
             variant="outlined"
             onChange={(e) => updateValues(e, userField.id)}
             InputLabelProps={{
@@ -184,7 +184,6 @@ function UserDetails(props) {
           {message}
         </Alert>
       </Snackbar>
-      ;
     </div>
   );
 }

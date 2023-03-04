@@ -22,3 +22,6 @@ body {
 .sidebar-items:hover {
     background-color: rgb(255, 247, 254);
 }
+.org-login:hover {
+  color: purple;
+}

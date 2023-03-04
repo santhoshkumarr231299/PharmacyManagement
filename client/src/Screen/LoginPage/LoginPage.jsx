@@ -190,7 +190,9 @@ function LoginPage() {
               <div>
                 <Form.Check onChange={(e) => handleChecked(e)} />
               </div>
-              <div style={{ opacity: "60%" }}>Organization Login</div>
+              <div className="org-login" style={{ opacity: "60%" }}>
+                Organization Login
+              </div>
             </div>
             <div
               style={{

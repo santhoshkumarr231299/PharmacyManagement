@@ -18,10 +18,23 @@ export default function Navbar(props) {
           className="main-title"
           style={{
             display: "flex",
-            gap: "2rem",
+            gap: "1rem",
           }}
         >
-          <h5>PharmSimple</h5>
+          <div>
+            <img
+              src="https://www.productions-plus.com/wp-content/uploads/2017/06/logo-icon.png"
+              style={{
+                maxHeight: "30px",
+                maxWidth: "30px",
+                margin: 0,
+                padding: 0,
+              }}
+            />
+          </div>
+          <div>
+            <h5 style={{ margin: 0, padding: 0 }}>PharmSimple</h5>
+          </div>
         </div>
 
         <div
