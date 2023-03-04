@@ -13,6 +13,7 @@ import DeliveryMenPage from "../DelvieryMenPage/DeliveryMenPage";
 import SalesReportsPage from "../SalesReport/SalesReportPage";
 import PurchasePage from "../PurchasePage/PurchasePage";
 import SettingsPage from "../SettingsPage/Settings";
+import AssignUserPrevilegesPage from "../AssignUserPrevileges/AssignUserPrevileges";
 import { Card } from "react-bootstrap";
 import ListGroup from "react-bootstrap/ListGroup";
 import axios from "axios";
@@ -28,6 +29,7 @@ import {
   DeliveryDining,
   AttachMoney,
   Settings,
+  AdminPanelSettings,
 } from "@mui/icons-material";
 
 function MainPage(props) {
@@ -58,7 +60,7 @@ function MainPage(props) {
   };
   const updateLastAccessedScreen = (e, value) => {
     e.preventDefault();
-    if (value === 11 || value === 10) {
+    if (value === 11 || value === 12) {
       return;
     }
 
@@ -127,8 +129,14 @@ function MainPage(props) {
       icon: <Flag />,
       haveAccess: user && user.haveAccessTo.includes("[9]"),
     },
-    { name: "Settings", menuValue: 10, icon: <Settings />, haveAccess: true },
-    { name: "Logout", menuValue: 11, icon: <Logout />, haveAccess: true },
+    {
+      name: "Manage User Previleges",
+      menuValue: 10,
+      icon: <AdminPanelSettings />,
+      haveAccess: user && user.haveAccessTo.includes("[10]"),
+    },
+    { name: "Settings", menuValue: 11, icon: <Settings />, haveAccess: true },
+    { name: "Logout", menuValue: 12, icon: <Logout />, haveAccess: true },
   ];
 
   const contentArea = () => {
@@ -152,8 +160,10 @@ function MainPage(props) {
       case 9:
         return <ReportsPage />;
       case 10:
-        return <SettingsPage username={user.username} />;
+        return <AssignUserPrevilegesPage />;
       case 11:
+        return <SettingsPage username={user.username} />;
+      case 12:
         return <LogoutPage />;
       default:
         return;
