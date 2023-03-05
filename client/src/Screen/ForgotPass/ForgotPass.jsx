@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Button, Form, Card, Alert } from "react-bootstrap";
+import { validatePassword } from "../../Validations/validations";
 
 function ForgotPassPage() {
   const [alertType, setAlertType] = useState();
@@ -38,7 +39,7 @@ function ForgotPassPage() {
       reference: conNewPassword,
     },
   ];
-  const createUser = (e) => {
+  const changePassword = (e) => {
     e.preventDefault();
     const userForgotPassDetails = {
       username: username.current.value,
@@ -51,7 +52,13 @@ function ForgotPassPage() {
       setAlert(() => "Password Mismatch");
       setOpenAlert(true);
     }
-
+    let valid = validatePassword(newPassword.current.value);
+    if (valid && valid.length > 0) {
+      setAlertType("warning");
+      setAlert(valid);
+      setOpenAlert(true);
+      return;
+    }
     axios
       .post("http://localhost:3000/forgot-pass-change", userForgotPassDetails)
       .then((resp) => {
@@ -83,7 +90,7 @@ function ForgotPassPage() {
       <Card
         style={{
           minHeight: "250px",
-          minWidth: "250px",
+          minWidth: "400px",
         }}
       >
         <Card.Title
@@ -127,7 +134,7 @@ function ForgotPassPage() {
               }}
               variant="primary"
               type="submit"
-              onClick={(e) => createUser(e)}
+              onClick={(e) => changePassword(e)}
             >
               Change Password
             </Button>

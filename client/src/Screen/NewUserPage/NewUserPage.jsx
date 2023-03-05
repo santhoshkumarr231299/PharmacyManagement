@@ -2,11 +2,19 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Button, Form, Card, Alert } from "react-bootstrap";
+import {
+  validateUsername,
+  validatePassword,
+  validatePhoneNumber,
+  validatePharmacyName,
+  validateEmail,
+} from "../../Validations/validations";
 
 function NewUserPage() {
   const [alertType, setAlertType] = useState();
   const [alert, setAlert] = useState();
   const [openAlert, setOpenAlert] = useState(false);
+
   const [hoverColor, setHoverColor] = useState("black");
   const [opacity, setOpacity] = useState("60%");
   const [dispProp, setDispProp] = useState(false);
@@ -61,7 +69,7 @@ function NewUserPage() {
     setDispProp(e.target.checked);
   };
 
-  const createUser = (e) => {
+  const createUser = async (e) => {
     e.preventDefault();
     const user = {
       username: username.current.value,
@@ -70,7 +78,13 @@ function NewUserPage() {
       mobileNumber: phoneNumber.current.value,
       pharmacyName: dispProp ? pharmacyName.current.value : "",
     };
-    console.log(user);
+    let valid = validation();
+    if (valid && valid.length > 0) {
+      setAlertType("warning");
+      setAlert(valid);
+      setOpenAlert(true);
+      return;
+    }
     axios.post("http://localhost:3000/new-user", user).then((resp) => {
       if (resp.data) {
         setAlertType(resp.data.status);
@@ -82,6 +96,33 @@ function NewUserPage() {
   const goToLoginPage = () => {
     navigate("/login");
   };
+
+  const validation = () => {
+    let valid = validateUsername(username.current.value);
+    if (valid && valid.length > 0) {
+      return valid;
+    }
+    valid = validatePassword(password.current.value);
+    if (valid && valid.length > 0) {
+      return valid;
+    }
+    valid = validatePhoneNumber(phoneNumber.current.value);
+    if (valid && valid.length > 0) {
+      return valid;
+    }
+    valid = validateEmail(email.current.value);
+    if (valid && valid.length > 0) {
+      return valid;
+    }
+    if (dispProp) {
+      valid = validatePharmacyName(pharmacyName.current.value);
+      if (valid && valid.length > 0) {
+        return valid;
+      }
+    }
+    return "";
+  };
+
   return (
     <div
       style={{
@@ -94,7 +135,7 @@ function NewUserPage() {
       <Card
         style={{
           minHeight: "250px",
-          minWidth: "250px",
+          minWidth: "400px",
         }}
       >
         <Card.Title
@@ -176,23 +217,6 @@ function NewUserPage() {
               </div>
               <div className="org-login">Organizational account</div>
             </div>
-            {/* <div
-              style={{
-                margin: "10px",
-                textAlign: "center",
-              }}
-            >
-              <a
-                onMouseEnter={() => setHoverColor("purple")}
-                onMouseLeave={() => setHoverColor("black")}
-                onClick={() => goToLoginPage()}
-                style={{
-                  color: hoverColor,
-                }}
-              >
-                Already a user?
-              </a>
-            </div> */}
           </Form>
         </Card.Body>
       </Card>

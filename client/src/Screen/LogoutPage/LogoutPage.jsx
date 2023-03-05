@@ -26,8 +26,7 @@ export default function LogoutPage(props) {
 
   const handleClose = (e) => {
     e.preventDefault();
-    setOpen(false);
-    window.location.reload();
+    props.close();
   };
   return (
     <div class="logout-page">
@@ -42,10 +41,18 @@ export default function LogoutPage(props) {
           {/* <DialogContentText>You want to logout</DialogContentText> */}
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={(e) => props.close()}>
+          <Button
+            style={{ color: "purple" }}
+            autoFocus
+            onClick={(e) => props.close()}
+          >
             Cancel
           </Button>
-          <Button onClick={(e) => logoutUser(e)} autoFocus>
+          <Button
+            style={{ color: "purple" }}
+            onClick={(e) => logoutUser(e)}
+            autoFocus
+          >
             Logout
           </Button>
         </DialogActions>

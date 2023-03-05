@@ -73,7 +73,7 @@ function MainPage(props) {
   };
   const updateLastAccessedScreen = (e, value) => {
     e.preventDefault();
-    if (value === 11 || value === 12) {
+    if (value === 12) {
       return;
     }
 

@@ -463,7 +463,7 @@ app.get('/get-invoices', (req, res) => {
     })
     return;
   }
-  connection.query('select * from invoices where username = ?', [session.user.username], (err, result, fields) => {
+  connection.query('select * from invoices where username = ? order by invoice_date desc', [session.user.username], (err, result, fields) => {
     if (err) {
       console.log(err);
     }
@@ -773,5 +773,42 @@ app.post('/get-user-previleges', (req, res) => {
     }
   });
 })
+
+app.post('/update-user-previleges', (req,res) => {
+   if (!session) {
+    res.status(200).send({
+      status: "error",
+      message: "Authentication Failed"
+    })
+    return;
+  }
+  if (session.user.role !== 1) {
+    res.status(200).send({
+      status: "error",
+      message: "Authorization Failed"
+    })
+    return;
+  }
+  connection.query('update users set have_access_to = ? where username = ?',[req.body.userPrevileges, req.body.username], (err, result, fields) => {
+       if (err) {
+      res.status(200).send({
+        status: "error",
+        message: "Something went wrong"
+      })
+    }
+    else if (result.changedRows == 0) {
+      res.status(200).send({
+        status: "warning",
+        message: "User Previleges are the same before"
+      })
+    }
+    else {
+      res.status(200).send({
+        status: "success",
+        message: "User Previleges Updated successfully"
+      })
+    }
+  } )
+});
 
 module.exports = app;

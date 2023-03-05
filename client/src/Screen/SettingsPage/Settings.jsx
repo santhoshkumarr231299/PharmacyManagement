@@ -4,6 +4,8 @@ import { Paper, Button, TextField } from "@mui/material";
 import { useEffect } from "react";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
+import Form from "react-bootstrap/Form";
+import InputGroup from "react-bootstrap/InputGroup";
 
 export default function Settings(props) {
   const [option, setOption] = useState(1);
@@ -108,28 +110,46 @@ function UserDetails(props) {
     setSeverity("");
     setOpen(false);
   };
-  const updateDetails = () => {
-    axios
+  const [isBtnDisabled, setIsBtnDisabled] = useState(false);
+  const updateDetails = async (e) => {
+    e.preventDefault();
+    setIsBtnDisabled(true);
+    await axios
       .post("http://localhost:3000/update-user-details", {
-        username: userFields[0].value,
-        email: userFields[1].value,
-        mobileNumber: userFields[2].value,
-        pharmacyName: userFields[3].value,
-        branchId: userFields[4].value,
+        username: props.username,
+        email: user.email,
+        mobileNumber: user.mobileNumber,
+        pharmacyName: user.pharmacyName,
+        branchId: user.branchId,
       })
       .then((resp) => {
         setOpen(true);
         setSeverity(resp.data.status);
         setMessage(resp.data.message);
+        setIsBtnDisabled(false);
       })
       .catch((err) => {
         setOpen(true);
         setSeverity("error");
         setMessage("Something went wrong");
+        setIsBtnDisabled(false);
       });
   };
   const updateValues = (e, id) => {
-    userFields[id - 1].value = e.target.value;
+    console.log("onchane called");
+    let tempUser = user;
+    console.log(tempUser);
+    // userFields[id - 1].value = e.target.value;
+    switch (id) {
+      case 2:
+        tempUser.email = e.target.value;
+        setUser(tempUser);
+        break;
+      case 3:
+        tempUser.mobileNumber = e.target.value;
+        setUser(tempUser);
+        break;
+    }
   };
   const fetchData = async () => {
     let tempUser;
@@ -149,15 +169,33 @@ function UserDetails(props) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
   });
   return (
-    <div>
+    <div style={{ maxWidth: "400px", margin: "auto" }}>
       {userFields.map((userField) => (
         <div>
-          <TextField
+          <InputGroup
+            className="mb-3"
+            style={{ display: "flex", alignItems: "center" }}
+          >
+            <InputGroup.Text style={{ minWidth: "150px", height: "40px" }}>
+              {userField.labelName}
+            </InputGroup.Text>
+            <Form.Control
+              key={userField.id}
+              style={{ margin: "5px", height: "40px" }}
+              label={userField.labelName}
+              disabled={userField.status === "disabled"}
+              defaultValue={userField.value}
+              onChange={(e) => updateValues(e, userField.id)}
+              required
+              aria-label="First name"
+            />
+          </InputGroup>
+          {/* <input
             key={userField.id}
             style={{ margin: "10px" }}
             label={userField.labelName}
             disabled={userField.status === "disabled"}
-            value={userField.value}
+            defaultValue={userField.value}
             variant="outlined"
             onChange={(e) => updateValues(e, userField.id)}
             InputLabelProps={{
@@ -165,7 +203,7 @@ function UserDetails(props) {
             }}
             required
           />
-          <br />
+          <br /> */}
         </div>
       ))}
       <Button
@@ -176,6 +214,7 @@ function UserDetails(props) {
         }}
         variant="contained"
         onClick={(e) => updateDetails(e)}
+        disabled={isBtnDisabled}
       >
         Save Details
       </Button>

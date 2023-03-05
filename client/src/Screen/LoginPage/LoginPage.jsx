@@ -94,7 +94,7 @@ function LoginPage() {
       <Card
         style={{
           minHeight: "250px",
-          minWidth: "250px",
+          minWidth: "400px",
         }}
       >
         <Card.Title

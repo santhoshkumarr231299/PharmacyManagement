@@ -110,19 +110,46 @@ function AssignUserPrevileges(props) {
     }
   };
 
-  useEffect(() => {
+  const fetchUserPrevileges = async () => {
+    let userPrevileges = "";
+    allMenus.map((menu) => {
+      if (menu.isChecked) {
+        userPrevileges += menu.FieldId;
+      }
+    });
+    return userPrevileges;
+  };
+
+  const updatePrevileges = async (e) => {
+    e.preventDefault();
+    let userPrevileges = await fetchUserPrevileges();
+    console.log(userPrevileges);
     axios
-      .post("http://localhost:3000/get-users", { search: "" })
+      .post("http://localhost:3000/update-user-previleges", {
+        username: selectedUser[0].label,
+        userPrevileges: userPrevileges,
+      })
       .then((resp) => {
         setSeverity(resp.data.status);
         setMessage(resp.data.message);
         setOpen(true);
+      })
+      .catch((err) => {
+        setSeverity("error");
+        setMessage("Something went wrong");
+        setOpen(true);
+      });
+  };
+
+  useEffect(() => {
+    axios
+      .post("http://localhost:3000/get-users", { search: "" })
+      .then((resp) => {
         let userOpt = [];
         resp.data.users.map((user) => {
           userOpt.push({ label: user.username });
         });
         setUsers(userOpt);
-        console.log(userOpt);
       })
       .catch((err) => {
         setSeverity("error");
@@ -165,22 +192,25 @@ function AssignUserPrevileges(props) {
             selected={selectedUser}
           />
         </Form.Group>
-        <h6
+        <div
           style={{
             margin: "10px",
             display: "flex",
             gap: "5px",
             margin: "auto",
             justifyContent: "center",
+            alignItems: "center",
           }}
         >
-          <div>Selected User : </div>
           <div>
+            <h6 style={{ margin: 0, padding: 0 }}>SELECTED USER : </h6>
+          </div>
+          <div style={{ textDecorationLine: "underline", color: "purple" }}>
             {selectedUser && selectedUser.length === 1
               ? selectedUser[0].label
               : "none"}
           </div>
-        </h6>
+        </div>
         <div
           style={{
             padding: "20px",
@@ -211,7 +241,7 @@ function AssignUserPrevileges(props) {
           backgroundColor: "purple",
         }}
         variant="contained"
-        // onClick={(e) => updateDetails(e)}
+        onClick={(e) => updatePrevileges(e)}
       >
         Save Previleges
       </Button>
