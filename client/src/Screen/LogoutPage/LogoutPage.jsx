@@ -9,7 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 
-export default function LogoutPage() {
+export default function LogoutPage(props) {
   const logoutUser = (e) => {
     e.preventDefault();
     axios.get("http://localhost:3000/logout").then((resp) => {
@@ -42,7 +42,7 @@ export default function LogoutPage() {
           {/* <DialogContentText>You want to logout</DialogContentText> */}
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={(e) => handleClose(e)}>
+          <Button autoFocus onClick={(e) => props.close()}>
             Cancel
           </Button>
           <Button onClick={(e) => logoutUser(e)} autoFocus>

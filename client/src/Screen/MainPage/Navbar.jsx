@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Avatar } from "@mui/material";
 import { purple } from "@mui/material/colors";
+import { Settings, Logout } from "@mui/icons-material";
 
 export default function Navbar(props) {
   return (
@@ -45,11 +46,25 @@ export default function Navbar(props) {
             alignItems: "center",
           }}
         >
-          <Avatar sx={{ bgcolor: purple[500] }}>
-            {props.username[0].toUpperCase()}
-          </Avatar>
-          Hello {props.username[0].toUpperCase() + props.username.substring(1)}
-          <div></div>
+          <div
+            style={{
+              display: "flex",
+              gap: "1rem",
+              alignItems: "center",
+            }}
+          >
+            <Avatar sx={{ bgcolor: purple[500] }}>
+              {props.username[0].toUpperCase()}
+            </Avatar>
+            Hello{" "}
+            {props.username[0].toUpperCase() + props.username.substring(1)}
+          </div>
+          <div onClick={(e) => props.changeOption(e, 11)}>
+            <Settings className="icon-top" />
+          </div>
+          <div onClick={(e) => props.changeOption(e, 12)}>
+            <Logout className="icon-top" />
+          </div>
         </div>
       </a>
     </nav>

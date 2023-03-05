@@ -25,3 +25,9 @@ body {
 .org-login:hover {
   color: purple;
 }
+
+.icon-top:hover {
+    color: purple;
+    height: 25px;
+    width: 25px;
+}

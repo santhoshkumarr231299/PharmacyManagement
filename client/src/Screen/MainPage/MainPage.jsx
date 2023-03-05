@@ -36,6 +36,15 @@ function MainPage(props) {
   const [option, setOption] = useState(0);
   const [user, setUser] = useState();
   const navigate = useNavigate();
+  const [logout, setLogout] = useState(false);
+
+  const handleCloseLogout = () => {
+    setLogout(false);
+  };
+  const handleOpenLogout = () => {
+    setLogout(true);
+  };
+
   useEffect(() => {
     axios.get("http://localhost:3000/logged-in").then((res) => {
       if (res.data.username === "") {
@@ -55,6 +64,10 @@ function MainPage(props) {
   }, []);
   const changeOption = (e, value) => {
     e.preventDefault();
+    if (value === 12) {
+      handleOpenLogout();
+      return;
+    }
     setOption(value);
     updateLastAccessedScreen(e, value);
   };
@@ -135,8 +148,6 @@ function MainPage(props) {
       icon: <AdminPanelSettings />,
       haveAccess: user && user.haveAccessTo.includes("[10]"),
     },
-    { name: "Settings", menuValue: 11, icon: <Settings />, haveAccess: true },
-    { name: "Logout", menuValue: 12, icon: <Logout />, haveAccess: true },
   ];
 
   const contentArea = () => {
@@ -163,8 +174,6 @@ function MainPage(props) {
         return <AssignUserPrevilegesPage />;
       case 11:
         return <SettingsPage username={user.username} />;
-      case 12:
-        return <LogoutPage />;
       default:
         return;
     }
@@ -172,7 +181,10 @@ function MainPage(props) {
   return (
     <div>
       <div className="sticky-pharm">
-        <Navbar username={user ? user.username : " "} />
+        <Navbar
+          username={user ? user.username : " "}
+          changeOption={changeOption}
+        />
       </div>
       <div
         style={{
@@ -229,6 +241,9 @@ function MainPage(props) {
           </main>
         </div>
       </div>
+      {logout && (
+        <LogoutPage open={handleOpenLogout} close={handleCloseLogout} />
+      )}
     </div>
   );
 }
