@@ -1,16 +1,9 @@
 import { Paper } from "@mui/material";
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { Card } from "react-bootstrap";
 // import Chart from "./Chart";
-function boxes() {
-  const list = [
-    { fieldName: "Users", value: "", bg: "primary" },
-    { fieldName: "Medicines", value: "", bg: "info" },
-    { fieldName: "Customers", value: "", bg: "warning" },
-    { fieldName: "Delivery Men", value: "", bg: "danger" },
-    { fieldName: "Pharmacists", value: "", bg: "success" },
-  ];
-
+function boxes(list) {
   let element = [];
   list.map((data) =>
     element.push(
@@ -41,6 +34,16 @@ function boxes() {
           >
             {data.fieldName}
           </h5>
+          <h1
+            style={{
+              marginLeft: "10px",
+              textAlign: "left",
+              paddingTop: "20px",
+              marginBottom: "10px",
+            }}
+          >
+            {data.value}
+          </h1>
         </Card>
       </div>
     )
@@ -48,6 +51,28 @@ function boxes() {
   return element;
 }
 function Dashboard() {
+  const [data, setData] = useState([]);
+  const list = [
+    { fieldName: "Managers", value: 0, bg: "primary" },
+    { fieldName: "Pharmacists", value: 0, bg: "info" },
+    { fieldName: "Delivery Men", value: 0, bg: "warning" },
+    { fieldName: "Medicines", value: 0, bg: "danger" },
+    { fieldName: "Sales", value: 0, bg: "success" },
+  ];
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/get-dashboard-details")
+      .then((resp) => {
+        console.log(resp.data);
+        list[0].value = resp.data.managersCount;
+        list[1].value = resp.data.pharmacistsCount;
+        list[2].value = resp.data.DeliveryMenCount;
+        list[3].value = resp.data.medicinesCount;
+        setData(list);
+      })
+      .catch((err) => console.log("error", err));
+  }, []);
   return (
     <Paper
       elevation={3}
@@ -69,7 +94,7 @@ function Dashboard() {
         }}
         className="dashboard"
       >
-        {boxes()}
+        {boxes(data)}
       </div>
       <div>
         <Paper

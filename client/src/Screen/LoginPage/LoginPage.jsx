@@ -76,11 +76,11 @@ function LoginPage() {
     },
   ];
 
-  useEffect(() => {
-    axios.get("http://localhost:3000/get-created-pharmacies").then((resp) => {
-      setPharmacies(resp.data.pharmacies);
-    });
-  }, []);
+  // useEffect(() => {
+  //   axios.get("http://localhost:3000/get-created-pharmacies").then((resp) => {
+  //     setPharmacies(resp.data.pharmacies);
+  //   });
+  // }, []);
 
   return (
     <div
@@ -150,7 +150,7 @@ function LoginPage() {
                   </Form.Group>
                 )}
 
-                {field.type === "select" && (
+                {/* {field.type === "select" && (
                   <Form.Select
                     style={{
                       marginBottom: "20px",
@@ -164,7 +164,7 @@ function LoginPage() {
                         data !== "" && <option value={data}>{data}</option>
                     )}
                   </Form.Select>
-                )}
+                )} */}
               </div>
             ))}
             <Alert
@@ -186,14 +186,14 @@ function LoginPage() {
             >
               Log In
             </Button>
-            <div style={{ margin: "10px", display: "flex", gap: "10px" }}>
+            {/* <div style={{ margin: "10px", display: "flex", gap: "10px" }}>
               <div>
                 <Form.Check onChange={(e) => handleChecked(e)} />
               </div>
               <div className="org-login" style={{ opacity: "60%" }}>
                 Organization Login
               </div>
-            </div>
+            </div> */}
             <div
               style={{
                 margin: "10px",

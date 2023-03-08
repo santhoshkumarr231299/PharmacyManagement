@@ -11,7 +11,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
-export default function CustomerPage() {
+export default function ManagerPage() {
   const [pageStatus, setPageStatus] = useState(false);
   const changeStatus = (val) => {
     setPageStatus(val);
@@ -19,33 +19,39 @@ export default function CustomerPage() {
   const getPage = () => {
     switch (pageStatus) {
       case true:
-        return <AddCustomerPage addCustomerStatus={changeStatus} />;
+        return <AddManagerPage addCustomerStatus={changeStatus} />;
       default:
-        return <CustomerReportPage addCustomerStatus={changeStatus} />;
+        return <ManagerReportPage addCustomerStatus={changeStatus} />;
     }
   };
   return <>{getPage()}</>;
 }
 
-function CustomerReportPage(props) {
-  const [customer, SetCustomer] = useState([]);
+function ManagerReportPage(props) {
+  const [manager, setManager] = useState([]);
   const [dataGridRows, setDataGridRows] = useState([]);
   useEffect(() => {
     let temp = [];
     let counter = 0;
-    // axios.get("http://localhost:3000/get-medicines").then((resp) => {
-    //   setMedicines(resp.data);
-    //   resp.data.forEach((da) => {
-    //     temp.push({ id: ++counter, mname: da.mname, mcompany: da.mcompany });
-    //   });
-    setDataGridRows(temp);
-    // });
+    axios.get("http://localhost:3000/get-managers").then((resp) => {
+      setManager(resp.data);
+      resp.data.map((data) => {
+        temp.push({
+          id: ++counter,
+          name: data.username,
+          email: data.email,
+          branch: data.branch,
+          address: data.address,
+        });
+      });
+      setDataGridRows(temp);
+    });
   }, []);
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
-    { field: "name", headerName: "Customer Name", width: 180 },
+    { field: "name", headerName: "Manager Name", width: 180 },
     { field: "email", headerName: "Email", width: 130 },
-    { field: "company", headerName: "Company Name", width: 130 },
+    { field: "branch", headerName: "Branch ID", width: 70 },
     { field: "address", headerName: "Address", width: 300 },
   ];
   return (
@@ -71,7 +77,7 @@ function CustomerReportPage(props) {
         variant="contained"
         onClick={() => props.addCustomerStatus(true)}
       >
-        Add Customer
+        Add Manager
       </Button>
       <DataGrid
         style={{
@@ -90,15 +96,17 @@ function CustomerReportPage(props) {
   );
 }
 
-function AddCustomerPage(props) {
+function AddManagerPage(props) {
   const [open, setOpen] = useState(false);
   const [severity, setSeverity] = useState("");
   const [message, setMessage] = useState("");
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [company, setCompany] = useState("");
+  const [branch, setBranch] = useState("");
   const [address, setAddress] = useState("");
+  const [password, setPassword] = useState("");
+  const [mobileNumber, setMobileNumber] = useState("");
 
   const updateValues = (e, fieldId) => {
     switch (fieldId) {
@@ -109,11 +117,16 @@ function AddCustomerPage(props) {
         setEmail(e.target.value);
         break;
       case 3:
-        setCompany(e.target.value);
+        setBranch(e.target.value);
         break;
       case 4:
         setAddress(e.target.value);
         break;
+      case 5:
+        setMobileNumber(e.target.value);
+        break;
+      // case 6:
+      //password
       default:
         console.log("Not Valid");
         break;
@@ -125,7 +138,7 @@ function AddCustomerPage(props) {
       id: 1,
       type: "text",
       fieldName: "name",
-      labelName: "Customer Name",
+      labelName: "Manager Name",
       status: "active",
     },
     {
@@ -138,8 +151,8 @@ function AddCustomerPage(props) {
     {
       id: 3,
       type: "number",
-      fieldName: "company",
-      labelName: "Company Name",
+      fieldName: "branch",
+      labelName: "Branch ID",
       status: "active",
     },
     {
@@ -149,6 +162,20 @@ function AddCustomerPage(props) {
       labelName: "Address",
       status: "active",
     },
+    {
+      id: 5,
+      type: "number",
+      fieldName: "mobilenumber",
+      labelName: "Mobile Number",
+      status: "active",
+    },
+    // {
+    //   id: 6,
+    //   type: "password",
+    //   fieldName: "password",
+    //   labelName: "Password",
+    //   status: "active",
+    // },
   ];
   const handleClose = () => {
     setMessage("");
@@ -157,27 +184,26 @@ function AddCustomerPage(props) {
   };
   const submitReport = (e) => {
     e.preventDefault();
-    // axios
-    //   .post("http://localhost:3000/post-medicine", {
-    //     medName: medName,
-    //     medCompany: medCompany,
-    //     medMrp: medMrp,
-    //     medRate: medRate,
-    //     medQuantity: medQuantity,
-    //     medExpiryDate: medExpiryDate,
-    //     medStatus: medStatus,
-    //   })
-    //   .then((resp) => {
-    //     setOpen(true);
-    //     setSeverity(resp.data.status);
-    //     setMessage(resp.data.message);
-    //   })
-    //   .catch((err) => {
-    //     setOpen(true);
-    //     setSeverity("error");
-    //     setMessage("Something went wrong");
-    //     return;
-    //   });
+    axios
+      .post("http://localhost:3000/post-new-manager", {
+        username: name,
+        email: email,
+        branch: branch,
+        address: address,
+        mobileNumber: mobileNumber,
+        password: "manager",
+      })
+      .then((resp) => {
+        setOpen(true);
+        setSeverity(resp.data.status);
+        setMessage(resp.data.message);
+      })
+      .catch((err) => {
+        setOpen(true);
+        setSeverity("error");
+        setMessage("Something went wrong");
+        return;
+      });
   };
   const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -208,7 +234,7 @@ function AddCustomerPage(props) {
           Back
         </Button>
         <div class="main-title">
-          <h2 style={{ color: "black", paddingTop: "20px" }}>New Customer</h2>
+          <h2 style={{ color: "black", paddingTop: "20px" }}>New Manager</h2>
         </div>
         <div class="main-form">
           <form name="event" style={{ verticalAlign: "middle", gap: "10px" }}>

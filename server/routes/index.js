@@ -57,7 +57,7 @@ app.get('/logged-in', (req, res) => {
 })
 
 app.post('/login', (req, res) => {
-  connection.query('SELECT * FROM USERS WHERE USERNAME = ? AND PASSWORD = ? AND PHARMACY_NAME = ?', [req.body.username, req.body.password, req.body.pharmacy], (err, result, fields) => {
+  connection.query('SELECT * FROM USERS WHERE USERNAME = ? AND PASSWORD = ?', [req.body.username, req.body.password, req.body.pharmacy], (err, result, fields) => {
     if (result.length == 1) {
       session = req.session;
       var validatedUser = {
@@ -370,7 +370,7 @@ app.get("/get-reports", (req, res) => {
     })
     return;
   }
-  connection.query('select * from reports order by reported_date desc', [session.user.username], (err, result, fields) => {
+  connection.query('select * from reports where username in (select u.username from users u where pharmacy_name = (select uu.pharmacy_name from users uu where username = ?)) order by reported_date desc', [session.user.username], (err, result, fields) => {
     let data = [];
     let count = 0;
     result.map((report) => {
@@ -515,7 +515,7 @@ app.post('/post-invoice', (req, res) => {
 })
 
 app.get('/get-delivery-men-details', (req, res) => {
-  var query = 'select * from delivery_men';
+  var query = 'select * from delivery_men where added_by in (select u.username from users u where pharmacy_name = (select uu.pharmacy_name from users uu where username = ?))';
   connection.query(query, (err, result, fields) => {
     if (err) {
       res.status(200).send({
@@ -547,9 +547,19 @@ app.post('/post-delivery-man-details', (req, res) => {
     })
     return;
   }
-  var queryParam = [req.body.name, req.body.email, req.body.mobileNumber, req.body.address, req.body.aadhar];
-  connection.query('insert into delivery_men set username = ?, email = ?, mobile_number = ?, address = ?, aadhar_number = ?', queryParam, (err, result, fields) => {
+  var queryParam = [req.body.name, req.body.email, req.body.mobileNumber, req.body.address, req.body.aadhar,session.user.username];
+  connection.query('insert into delivery_men set username = ?, email = ?, mobile_number = ?, address = ?, aadhar_number = ?, added_by = ?', queryParam, (err, result, fields) => {
     if (err) {
+      res.status(200).send({
+        status: "error",
+        message: "Something went wrong"
+      })
+    }
+    else {
+      var queryParam1 = [req.body.name, "deliveryman",req.body.mobileNumber,session.user.username,req.body.email,session.user.username, '[6]' ];
+  connection.query('insert into users set username = ?, password = ?, role = 6, last_accessed = 1,  mobile_number = ?,branch_id = (select u.branch_id from users u where u.username = ?), email = ?, pharmacy_name = (select u.pharmacy_name from users u where u.username = ?), have_access_to = ?', queryParam1, (err1, result1, fields1) => {
+    if (err1) {
+      console.log(err1);
       res.status(200).send({
         status: "error",
         message: "Something went wrong"
@@ -562,6 +572,8 @@ app.post('/post-delivery-man-details', (req, res) => {
       })
     }
   })
+}
+})
 })
 
 app.get('/get-pharmacists-details', (req, res) => {
@@ -810,5 +822,109 @@ app.post('/update-user-previleges', (req,res) => {
     }
   } )
 });
+
+app.get("/get-managers", (req,res) => {
+  if (!session) {
+    res.status(200).send({
+      status: "error",
+      message: "Authentication Failed"
+    })
+    return;
+  }
+  connection.query('select * from managers where pharmacy_name = (select u.pharmacy_name from users u where u.username = ?) ',[ session.user.username], (err, result, fields) => {
+    if (err) {
+      console.log(err);
+   res.status(200).send({
+     status: "error",
+     message: "Something went Wrong"
+   })
+ }
+ else {
+  let data = [];
+  result.forEach(element => {
+    data.push({
+      username : element.username,
+      email : element.email, 
+      branch : element.branch_id,
+      address : element.address,
+    });    
+  });
+   res.status(200).send(data);
+ }
+} )
+})
+
+app.post("/post-new-manager", (req,res) => {
+  if (!session) {
+    res.status(200).send({
+      status: "error",
+      message: "Authentication Failed"
+    })
+    return;
+  }
+  if (session.user.role !== 1) {
+    res.status(200).send({
+      status: "error",
+      message: "Authorization Failed"
+    })
+    return;
+  }
+  var queryParam1 = [req.body.username, req.body.password, req.body.email,session.user.username,req.body.branch,req.body.mobileNumber];
+ connection.query("insert into users (username, password, role, last_accessed,email,pharmacy_name, branch_id, mobile_number, have_access_to) values (?,?,4,1,?,(select uuu.pharmacy_name from users uuu where uuu.username = ?),?, ?, '[1][2][4][6][7][9]')", queryParam1, (err1, result1, fields1) => {
+  if (err1) {
+    res.status(200).send({
+      status: "error",
+      message: "Failed to insert Manager"
+    })
+  }
+  else {
+    var queryParam = [req.body.username, req.body.password, req.body.email, req.body.username, req.body.address, session.user.username];
+    connection.query('insert into managers (username, password, email, branch_id, address, pharmacy_name) values (?,?,?,(select u.branch_id from users u where u.username = ?),?, (select uuu.pharmacy_name from users uuu where uuu.username = ?))', queryParam, (err, result, fields) => {
+      if (err) {
+     res.status(200).send({
+       status: "error",
+       message: "Something went wrong"
+     })
+   }
+   else {
+    res.status(200).send({
+      status: "success",
+      message: "Manager details inserted successfully"
+    })
+   }
+  } )
+  }
+
+ })
+})
+
+app.get("/get-dashboard-details", (req,res) => {
+  if (!session) {
+    res.status(200).send({
+      status: "error",
+      message: "Authentication Failed"
+    })
+    return;
+  }
+  connection.query('select (select count(*) from managers where pharmacy_name = (select u.pharmacy_name from users u where username = ?)) as managers_count, (select count(*) from pharmacists where added_by in (select u.username from users u where u.pharmacy_name = (select uu.pharmacy_name from users uu where uu.username = ?))) as pharmacists_count, (select count(*) from delivery_men) as delivery_men_count, (select count(*) from medicines where added_by in (select u.username from users u where u.pharmacy_name = (select uu.pharmacy_name from users uu where uu.username = ?))) as medicines_count',[ session.user.username,session.user.username,session.user.username], (err, result, fields) => {
+    // where pharmacy_name = 
+    //where added_by in (select u.username from users u where u.pharmacy_name = (select uu.pharmacy_name from users uu where uu.username = ?))
+    if (err) {
+      console.log(err);
+   res.status(200).send({
+     status: "error",
+     message: "Something went Wrong"
+   })
+ }
+ else {
+   res.status(200).send({
+    managersCount : result[0].managers_count,
+    pharmacistsCount : result[0].pharmacists_count, 
+    DeliveryMenCount : result[0].delivery_men_count,
+    medicinesCount : result[0].medicines_count,
+  });
+ }
+} )
+})
 
 module.exports = app;
