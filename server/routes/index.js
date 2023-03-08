@@ -98,7 +98,7 @@ app.post('/new-user', (req, res) => {
       })
 
     } else {
-      connection.query('INSERT INTO USERS (USERNAME, PASSWORD, ROLE, LAST_ACCESSED,EMAIL,MOBILE_NUMBER, PHARMACY_NAME,BRANCH_ID,have_access_to) VALUES (?,?,?,?,?,?,?,?,?)', [req.body.username, req.body.password, req.body.pharmacyName && req.body.pharmacyName.trim() !== '' ? 1 : 2, req.body.pharmacyName && req.body.pharmacyName.trim() !== '' ? 1 : 8, req.body.email, req.body.mobileNumber, req.body.pharmacyName, req.body.pharmacyName && req.body.pharmacyName.trim() !== '' ? 1 : '', req.body.pharmacyName && req.body.pharmacyName.trim() !== '' ? '[1],[2],[3],[4],[5],[6],[7],[8],[9]' : '[8]'], (err1, result1, fields1) => {
+      connection.query('INSERT INTO USERS (USERNAME, PASSWORD, ROLE, LAST_ACCESSED,EMAIL,MOBILE_NUMBER, PHARMACY_NAME,BRANCH_ID,have_access_to) VALUES (?,?,?,?,?,?,?,?,?)', [req.body.username, req.body.password, req.body.pharmacyName && req.body.pharmacyName.trim() !== '' ? 1 : 2, req.body.pharmacyName && req.body.pharmacyName.trim() !== '' ? 1 : 8, req.body.email, req.body.mobileNumber, req.body.pharmacyName, req.body.pharmacyName && req.body.pharmacyName.trim() !== '' ? 1 : '', req.body.pharmacyName && req.body.pharmacyName.trim() !== '' ? '[1],[2],[3],[4],[5],[6],[7],[8],[9][10]' : '[8]'], (err1, result1, fields1) => {
         if (err1) {
           res.status(200).send({
             status: "danger",
@@ -515,9 +515,10 @@ app.post('/post-invoice', (req, res) => {
 })
 
 app.get('/get-delivery-men-details', (req, res) => {
-  var query = 'select * from delivery_men where added_by in (select u.username from users u where pharmacy_name = (select uu.pharmacy_name from users uu where username = ?))';
-  connection.query(query, (err, result, fields) => {
+  var query = 'select * from delivery_men where added_by in (select u.username from users u where u.pharmacy_name = (select uu.pharmacy_name from users uu where uu.username = ? ))';
+  connection.query(query, [session.user.username],(err, result, fields) => {
     if (err) {
+      console.log(err);
       res.status(200).send({
         status: "error",
         message: "Something went wrong"
@@ -557,21 +558,21 @@ app.post('/post-delivery-man-details', (req, res) => {
     }
     else {
       var queryParam1 = [req.body.name, "deliveryman",req.body.mobileNumber,session.user.username,req.body.email,session.user.username, '[6]' ];
-  connection.query('insert into users set username = ?, password = ?, role = 6, last_accessed = 1,  mobile_number = ?,branch_id = (select u.branch_id from users u where u.username = ?), email = ?, pharmacy_name = (select u.pharmacy_name from users u where u.username = ?), have_access_to = ?', queryParam1, (err1, result1, fields1) => {
-    if (err1) {
-      console.log(err1);
-      res.status(200).send({
-        status: "error",
-        message: "Something went wrong"
+      connection.query('insert into users set username = ?, password = ?, role = 6, last_accessed = 1,  mobile_number = ?,branch_id = (select u.branch_id from users u where u.username = ?), email = ?, pharmacy_name = (select u.pharmacy_name from users u where u.username = ?), have_access_to = ?', queryParam1, (err1, result1, fields1) => {
+        if (err1) {
+          console.log(err1);
+          res.status(200).send({
+            status: "error",
+            message: "Something went wrong"
+          })
+        }
+        else {
+          res.status(200).send({
+            status: "success",
+            message: "New Delivery Man details inserted successfully"
+          })
+        }
       })
-    }
-    else {
-      res.status(200).send({
-        status: "success",
-        message: "New Delivery Man details inserted successfully"
-      })
-    }
-  })
 }
 })
 })

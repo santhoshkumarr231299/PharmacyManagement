@@ -35,7 +35,7 @@ function DeliveryManPage(props) {
     let counter = 0;
     axios.get("http://localhost:3000/get-delivery-men-details").then((resp) => {
       setDeliveryMan(resp.data);
-      resp.data.forEach((data) => {
+      resp.data.map((data) => {
         temp.push({
           id: ++counter,
           name: data.name,
