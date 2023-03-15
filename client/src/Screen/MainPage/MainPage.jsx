@@ -13,6 +13,7 @@ import DeliveryMenPage from "../DelvieryMenPage/DeliveryMenPage";
 import SalesReportsPage from "../SalesReport/SalesReportPage";
 import PurchasePage from "../PurchasePage/PurchasePage";
 import SettingsPage from "../SettingsPage/Settings";
+import PharmacistApprovalPage from "../PharmacistApprovalPage/PharmacistApprovalPage";
 import AssignUserPrevilegesPage from "../AssignUserPrevileges/AssignUserPrevileges";
 import { Card } from "react-bootstrap";
 import ListGroup from "react-bootstrap/ListGroup";
@@ -64,7 +65,7 @@ function MainPage(props) {
   }, []);
   const changeOption = (e, value) => {
     e.preventDefault();
-    if (value === 12) {
+    if (value === 13) {
       handleOpenLogout();
       return;
     }
@@ -148,6 +149,12 @@ function MainPage(props) {
       icon: <AdminPanelSettings />,
       haveAccess: user && user.haveAccessTo.includes("[10]"),
     },
+    {
+      name: "Orders Approval",
+      menuValue: 11,
+      icon: <LocalPharmacy />,
+      haveAccess: user && user.haveAccessTo.includes("[11]"),
+    },
   ];
 
   const contentArea = () => {
@@ -173,6 +180,8 @@ function MainPage(props) {
       case 10:
         return <AssignUserPrevilegesPage />;
       case 11:
+        return <PharmacistApprovalPage />;
+      case 12:
         return <SettingsPage username={user.username} />;
       default:
         return;

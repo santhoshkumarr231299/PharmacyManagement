@@ -98,7 +98,7 @@ app.post('/new-user', (req, res) => {
       })
 
     } else {
-      connection.query('INSERT INTO USERS (USERNAME, PASSWORD, ROLE, LAST_ACCESSED,EMAIL,MOBILE_NUMBER, PHARMACY_NAME,BRANCH_ID,have_access_to) VALUES (?,?,?,?,?,?,?,?,?)', [req.body.username, req.body.password, req.body.pharmacyName && req.body.pharmacyName.trim() !== '' ? 1 : 2, req.body.pharmacyName && req.body.pharmacyName.trim() !== '' ? 1 : 8, req.body.email, req.body.mobileNumber, req.body.pharmacyName, req.body.pharmacyName && req.body.pharmacyName.trim() !== '' ? 1 : '', req.body.pharmacyName && req.body.pharmacyName.trim() !== '' ? '[1],[2],[3],[4],[5],[6],[7],[8],[9][10]' : '[8]'], (err1, result1, fields1) => {
+      connection.query('INSERT INTO USERS (USERNAME, PASSWORD, ROLE, LAST_ACCESSED,EMAIL,MOBILE_NUMBER, PHARMACY_NAME,BRANCH_ID,have_access_to) VALUES (?,?,?,?,?,?,?,?,?)', [req.body.username, req.body.password, req.body.pharmacyName && req.body.pharmacyName.trim() !== '' ? 1 : 2, req.body.pharmacyName && req.body.pharmacyName.trim() !== '' ? 1 : 8, req.body.email, req.body.mobileNumber, req.body.pharmacyName, req.body.pharmacyName && req.body.pharmacyName.trim() !== '' ? 1 : '', req.body.pharmacyName && req.body.pharmacyName.trim() !== '' ? '[1],[2],[3],[4],[5],[6],[7],[9][10]' : '[8]'], (err1, result1, fields1) => {
         if (err1) {
           res.status(200).send({
             status: "danger",
@@ -632,7 +632,7 @@ app.post('/post-pharmacist-details', (req, res) => {
           })
         }
         else {
-          var queryParam1 = [req.body.name, 'pharmacist', 3, 5, req.body.email, session.user.username, session.user.username, req.body.mobileNumber, '[5]'];
+          var queryParam1 = [req.body.name, 'pharmacist', 3, 11, req.body.email, session.user.username, session.user.username, req.body.mobileNumber, '[11]'];
           connection.query('insert into users (username, password, role,last_accessed, email,pharmacy_name,branch_id, mobile_number, have_access_to) values (?,?,?,?,?,(select u.pharmacy_name from users u where username = ?),(select u.branch_id from users u where username = ?),?,?)', queryParam1, (err1, result1, fields1) => {
             if (err1) {
               res.status(200).send({
@@ -926,6 +926,72 @@ app.get("/get-dashboard-details", (req,res) => {
   });
  }
 } )
+})
+
+app.get('/get-ordered-items-for-approval', (req,res) => {
+  if (!session) {
+    res.status(200).send({
+      status: "error",
+      message: "Authentication Failed"
+    })
+    return;
+  }
+  connection.query('select distinct username from cartitems',[ session.user.username,session.user.username,session.user.username], (err, result, fields) => {
+    if (err) {
+      console.log(err);
+   res.status(200).send({
+     status: "error",
+     message: "Something went Wrong"
+   })
+ }
+ else {
+  let temp = [];
+    result.forEach(element => {
+      temp.push({
+        username : element.username,
+      })
+    })
+   res.status(200).send(temp);
+ }
+} )
+})
+
+app.post('/approve-order', (req,res) => {
+  if (!session) {
+    res.status(200).send({
+      status: "error",
+      message: "Authentication Failed"
+    })
+    return;
+  }
+  var queryParam1 = [req.body.username];
+ connection.query("insert into approved_items (mid, username, medname, quantity,price) select ci.mid, ci.username, ci.medname, ci.quantity, ci.price from cartitems ci where username = ?", queryParam1, (err1, result1, fields1) => {
+  if (err1) {
+    res.status(200).send({
+      status: "error",
+      message: "Something went wrong",
+    })
+  }
+  else {
+    var queryParam = [req.body.username];
+    connection.query('delete from cartitems where username = ?', queryParam, (err, result, fields) => {
+      if (err) {
+     res.status(200).send({
+       status: "error",
+       message: "Something went wrong",
+      })
+   }
+   else {
+    res.status(200).send({
+      status: "success",
+      message: "Order Approved"
+    })
+   }
+  } )
+  }
+
+ })
+
 })
 
 module.exports = app;

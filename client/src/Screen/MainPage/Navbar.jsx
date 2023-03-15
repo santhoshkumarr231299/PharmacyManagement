@@ -59,10 +59,10 @@ export default function Navbar(props) {
             Hello{" "}
             {props.username[0].toUpperCase() + props.username.substring(1)}
           </div>
-          <div onClick={(e) => props.changeOption(e, 11)}>
+          <div onClick={(e) => props.changeOption(e, 12)}>
             <Settings className="icon-top" />
           </div>
-          <div onClick={(e) => props.changeOption(e, 12)}>
+          <div onClick={(e) => props.changeOption(e, 13)}>
             <Logout className="icon-top" />
           </div>
         </div>

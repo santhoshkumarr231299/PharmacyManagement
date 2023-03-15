@@ -3,7 +3,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { TextField, Button, Paper } from "@mui/material";
+import { TextField, Button, Paper, LinearProgress } from "@mui/material";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import InputLabel from "@mui/material/InputLabel";
@@ -28,9 +28,11 @@ export default function MedicinePageManager() {
 }
 
 function PharmacistPage(props) {
+  const [isLoading, setIsLoading] = useState(false);
   const [pharmacists, setPharmacists] = useState([]);
   const [dataGridRows, setDataGridRows] = useState([]);
   useEffect(() => {
+    setIsLoading(true);
     let temp = [];
     let counter = 0;
     axios.get("http://localhost:3000/get-pharmacists-details").then((resp) => {
@@ -44,6 +46,7 @@ function PharmacistPage(props) {
           address: data.address,
           aadhar: data.aadhar,
         });
+        setIsLoading(false);
       });
       setDataGridRows(temp);
     });
@@ -82,6 +85,7 @@ function PharmacistPage(props) {
         Add Pharmacist
       </Button>
       <DataGrid
+        loading={isLoading}
         style={{
           alignSelf: "center",
           width: "1000px",

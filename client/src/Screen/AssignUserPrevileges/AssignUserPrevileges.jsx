@@ -52,54 +52,70 @@ function AssignUserPrevileges(props) {
       FieldName: "Dashboard",
       FieldType: "checkbox",
       isChecked: usePrevileges && usePrevileges.includes("[1]"),
+      disabled: false,
     },
     {
       FieldId: "[2]",
       FieldName: "Invoice",
       FieldType: "checkbox",
       isChecked: usePrevileges && usePrevileges.includes("[2]"),
+      disabled: false,
     },
     {
       FieldId: "[3]",
       FieldName: "Customer",
       FieldType: "checkbox",
       isChecked: usePrevileges && usePrevileges.includes("[3]"),
+      disabled: false,
     },
     {
       FieldId: "[4]",
       FieldName: "Medicine",
       FieldType: "checkbox",
       isChecked: usePrevileges && usePrevileges.includes("[4]"),
+      disabled: false,
     },
     {
       FieldId: "[5]",
       FieldName: "Pharmacist",
       FieldType: "checkbox",
       isChecked: usePrevileges && usePrevileges.includes("[5]"),
+      disabled: false,
     },
     {
       FieldId: "[6]",
       FieldName: "Delivery Man",
       FieldType: "checkbox",
       isChecked: usePrevileges && usePrevileges.includes("[6]"),
+      disabled: false,
     },
     {
       FieldId: "[7]",
       FieldName: "Sales Report",
       FieldType: "checkbox",
       isChecked: usePrevileges && usePrevileges.includes("[7]"),
+      disabled: false,
     },
     {
       FieldId: "[8]",
       FieldName: "Purchase",
       FieldType: "checkbox",
       isChecked: usePrevileges && usePrevileges.includes("[8]"),
+      disabled: false,
     },
     {
       FieldId: "[9]",
       FieldName: "Reports",
       FieldType: "checkbox",
       isChecked: usePrevileges && usePrevileges.includes("[9]"),
+      disabled: false,
+    },
+    {
+      FieldId: "[11]",
+      FieldName: "Order Approval",
+      FieldType: "checkbox",
+      isChecked: usePrevileges && usePrevileges.includes("[11]"),
+      disabled: true,
     },
   ];
   const changeOption = (e, id) => {
@@ -229,6 +245,7 @@ function AssignUserPrevileges(props) {
                   type={menu.FieldType}
                   label={menu.FieldName}
                   checked={menu.isChecked}
+                  disabled={menu.disabled}
                 />
               </div>
             ))}
